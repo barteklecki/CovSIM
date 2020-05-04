@@ -1,168 +1,40 @@
-<!DOCTYPE html><!-- HTML5 -->
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title> CovSIM </title>
-        <!-- CSS <link rel="stylesheet" type="text/css" href="           .css"> -->
-        <!-- BOOTSTRAP --><!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> <!--//-->
-        <style>
-            
-            body {
-                margin: 0px;
-                background-color: lightcyan;
-                color: black;
-            }
-            
-            header {
-                font-weight: bold;
-                font-style: italic;
-            }
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--BootstrapCSS--><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!--CSS--><link rel="stylesheet" href="style.css">
 
-            nav {
-                width: 100%;
-                height: 50px;
-                background-color: orange;
-                border-bottom: 2px;
-                border-bottom-style: dashed;
-                border-bottom-color: orangered;
-                padding: 5px;
-                vertical-align: middle;
-                
+    <title>CovSIM - pandemic simulator</title>
+  </head>
+  <body>
+    <nav class="topNav container-fluid">
+        <div class="bg-primary text-light h1">CovSIM pandemic simulator</div>
+    </nav>
 
-            }
-
-            nav > i:first-child {
-                color: darkred;
-                font-size: 200%;
-            }
-
-            nav > i:first-child:before {
-                content: '\01F31F ';
-                font-style: normal;
-                font-weight: bolder;
-                font-size: 120%;
-                color: red;
-                
-            }
-
-            main canvas {
-                width: 500px;
-                height: 500px;
-                border-style: dotted;
-                border-color:gray;
-                border-width: 2px;
-                border-radius: 10px;
-                
-
-            }
-            
-        </style>
-
-        
-    </head>
-
-    <body>
-        <header>
-            <nav>
-               <I id="logo">CovSIM</I><I> pandemic simulator</I>
-            </nav>
-        </header>
-        <main>
-            <div id="graph">
-                  <canvas>
-                    graph
-                  </canvas>
+    <main class="container-fluid bg-light">
+            <div class="d-flex flex-row align-items-center">
+                <div class="col-sm-11 col-lg-3 m-1 bg-info">options</div>
+                <div class="col-sm-11 col-lg-8 m-1 bg-secondary">graph</div>
             </div>
-            <aside>
-                <svg width="512" height="512" id="hexatar-preview" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
-                    <g id="hexatar-background"><g class="hexatar-base">
-                        <rect class="col-obj" x="-0.004" y="0.003" style="fill: rgb(146, 138, 206);" width="512" height="512"></rect>
-                    </g></g>
-                    <g id="hexatar-hair-rear"></g>
-                    <g id="hexatar-bodies">
-                        <g id="hexatar-body">
-                            <polygon class="col-obj" style="fill:#FCE2E1;" points="380.515,465 301,451 301,334 211,334 211,451 131.636,465 94.115,512   418.035,512 "></polygon>
-                            <polygon class="shadow-obj" style="fill: rgb(247, 181, 179);" points="380.541,465 301,451 301,334 256,334 256,512 418.062,512 "></polygon>
-                            <polygon id="hexatar-neck-control" class="shadow-obj-2x" style="opacity: 0.5; fill: rgb(242, 136, 133);" points="301.054,387.482 255.998,427.693 210.942,384.615  210.942,333.485 301.054,333.485 "></polygon>
-                        </g>
-                        <g id="hexatar-clothes"><g class="hexatar-base">
-                        <path class="shadow-obj-2x" style="fill: rgb(102, 0, 0);" d="M329.553,417.167h-28.499v14.956h43.008v-0.447 C344.063,423.663,337.567,417.167,329.553,417.167z M167.935,432.123h43.008v-14.956h-28.052 C174.631,417.167,167.935,423.863,167.935,432.123z"></path>
-                        <path class="col-obj" style="fill: rgb(204, 0, 0);" d="M382.755,464.994L344,457.399v-25.405h-54.605 c-18.075,0-33.356,6.885-33.356,25.173c0-18.288-14.024-25.173-32.099-25.173H168v25.405l-38.757,7.595l-37.084,47h327.68 L382.755,464.994z"></path>
-                        <path class="shadow-obj" style="fill: rgb(153, 0, 0);" d="M344.064,457.296v-25.173h-54.669c-17.96,0-33.31,6.741-33.31,25.173 l-28.757,16.838v7.75c-2.048,0.746-3.536,2.699-3.536,5.014c0,2.955,2.396,5.351,5.351,5.351c2.955,0,5.351-2.396,5.351-5.351 c0-2.136-1.022-3.965-3.07-4.823v-3.522L256,462.099v49.896h2.048v-49.926l26.624,16.484v3.331 c-2.048,0.746-3.536,2.699-3.536,5.014c0,2.955,2.396,5.351,5.351,5.351c2.955,0,5.351-2.396,5.351-5.351 c0-2.136-1.022-3.965-3.07-4.823v-5.87l-30.72-18.909H344.064z"></path>
-                    </g></g>
-                    </g>
-                    <g id="hexatar-faces">
-                        <g id="hexatar-ears"><g class="hexatar-base">
-                        <g class="hexatar-ears-right"> 	<polygon class="col-obj" style="fill:#FCE2E1;" points="172.639,176.555 172.639,243.147 154.47,251.417 138.743,242.769  115.596,187.997 141.602,155.736"></polygon> 	<polygon class="shadow-obj" style="fill: rgb(247, 181, 179);" points="143.639,169.144 127.136,189.615 146.602,235.678 154.893,240.237  172.639,231.856 172.639,188.018"></polygon>
-                        </g>
-                        <g class="hexatar-ears-left"> 	<polygon class="shadow-obj" style="fill: rgb(247, 181, 179);" points="339.621,243.147 339.621,176.555 369.839,155.736 395.845,187.997  373.552,240.749 356.971,251.417"></polygon> 	<polygon class="shadow-obj-2x" style="fill: rgb(242, 136, 133);" points="367.874,169.233 339.621,188.383 339.621,232.942 356.246,239.992  365.543,234.011 384.305,189.615"></polygon>
-                        </g>
-                    </g></g>
-                        <g id="hexatar-face"><g class="hexatar-base">
-                        <polygon class="col-obj" style="fill:#FCE2E1;" points="256.005,7.17 153.605,71.355 153.605,291.893 216.444,386.05  248.348,386.05 296.385,386.05 358.404,291.893 358.404,71.355"></polygon>
-                        <polygon class="shadow-obj" style="fill: rgb(247, 181, 179);" points="256.006,7.17 256.005,386.05 264.637,386.05 296.385,386.05  358.404,291.893 358.405,71.355"></polygon>
-                    </g></g>
-                        <g id="hexatar-mouth"><g class="hexatar-base">
-                        <polygon class="col-obj" style="fill: rgb(223, 144, 129);" points="220.382,311.877 292.295,311.877 267.146,328.877 245.531,328.877"></polygon>
-                        <polygon class="shadow-obj" style="fill: rgb(213, 108, 88);" points="262.624,296.236 256.339,303.115 250.054,296.236 238.062,296.292  211.196,311.877 301.481,311.877 273.939,296.181"></polygon>
-                    </g></g>
-                        <g id="hexatar-beard"><g class="hexatar-base">
-                        <path class="col-obj has-mustache" style="fill: rgb(66, 66, 66);" d="M358.613,227.765h-18.924v73.6l-55.127-28.27h-54.954 l-57.071,30.394v-75.724h-18.924v123.917l72.889,60.344h61.166l70.936-60.344h-0.001L358.613,227.765z M294.961,344.784h-79.622 v-38.88l13.543-18.859h52.536l13.543,18.859V344.784z"></path>
-                        <polygon class="shadow-obj" style="opacity: 0.4; fill: rgb(40, 40, 40);" points="358.613,227.765 339.689,227.765 339.689,301.365 284.562,273.095  256.093,273.095 256.093,287.045 281.419,287.045 294.961,305.904 294.961,344.784 256.093,344.784 256.093,412.026  287.667,412.026 358.604,351.682 358.603,351.682"></polygon>
-                    </g></g>
-                        <g id="hexatar-mustache"></g>
-                        <g id="hexatar-nose"><g class="hexatar-base">
-                        <polygon class="shadow-obj" style="fill: rgb(247, 181, 179);" points="262.701,189.716 262.701,173.555 249.3,173.555 249.3,189.716  237.981,233.546 229.797,238.005 235.138,260.036 256.001,264.281 276.158,260.036 282.204,238.005 274.02,233.546"></polygon>
-                        <polygon class="shadow-obj-2x" style="fill: rgb(242, 136, 133);" points="262.701,189.716 262.701,173.555 256.001,173.555 256.001,264.281  276.158,260.036 282.204,238.005 274.02,233.546"></polygon>
-                    </g></g>
-                        <g id="hexatar-eyeGroup">
-                            <g id="hexatar-eye"><g class="hexatar-base">
-                        <g class="hexatar-eye-right">
-                            <path class="white-obj" style="fill:#FFFFFF;" d="M229.552,197.4c0,0-1.953-5.23-7.334-10.607 c-12.432-2.113-22.967,0.451-22.967,0.451s-9.34,7.593-11.09,9.468c9.066,6.368,29.886,10.832,38.979,2.044 C228.912,200.525,230.075,198.544,229.552,197.4z"></path>
-                            <circle class="shadow-obj" style="opacity: 0.3; fill: rgb(0, 0, 0);" cx="210.821" cy="193.739" r="8.122"></circle>
-                            <circle class="col-obj" style="fill: rgb(17, 17, 17);" cx="210.821" cy="193.739" r="4.204"></circle>
-                            <circle class="white-obj" style="fill:#FFFFFF;" cx="207.608" cy="195.977" r="2.614"></circle>
-                            <path class="hair-col" style="fill: rgb(66, 66, 66);" d="M229.959,188.794l-7.745-3.097c-8.687-1.549-16.499-1.078-23.57,1.28 c-2.29,1.482-10.304,9.63-11.247,10.842c1.751-1.481,11.179-9.428,11.651-9.765c3.3-0.808,10.775-1.077,22.425-0.876l7.341,9.361 c-0.876-3.434-2.357-6.33-4.445-8.822L229.959,188.794z"></path>
-                            <path class="skin-col" style="fill: rgb(242, 136, 133);" d="M191.438,198.896c9.159,4.647,21.398,8.818,31.989,2.492 C213.555,205.421,201.943,203.139,191.438,198.896z"></path>
-                        </g>
-                        <g class="hexatar-eye-left">
-                            <path class="white-obj" style="fill:#FFFFFF;" d="M283.501,197.4c0,0,1.953-5.23,7.334-10.607 c12.432-2.113,22.967,0.451,22.967,0.451s9.34,7.593,11.09,9.468c-9.066,6.368-29.886,10.832-38.979,2.044 C284.141,200.525,282.978,198.544,283.501,197.4z"></path>
-                            <circle class="shadow-obj" style="opacity: 0.3; fill: rgb(0, 0, 0);" cx="302.232" cy="193.739" r="8.122"></circle>
-                            <circle class="col-obj" style="fill: rgb(17, 17, 17);" cx="302.232" cy="193.739" r="4.204"></circle>
-                            <circle class="white-obj" style="fill:#FFFFFF;" cx="305.445" cy="195.977" r="2.614"></circle>
-                            <path class="hair-col-2x" style="fill: rgb(40, 40, 40);" d="M288.684,187.717c-2.088,2.492-3.569,5.387-4.445,8.822l7.341-9.361 c11.651-0.201,19.126,0.068,22.425,0.876c0.472,0.337,9.9,8.284,11.651,9.765c-0.943-1.212-8.956-9.36-11.247-10.842 c-7.071-2.357-14.883-2.829-23.57-1.28l-7.745,3.097L288.684,187.717z"></path>
-                            <path class="skin-col-2x" style="fill: rgb(237, 91, 87);" d="M289.626,201.387c10.591,6.326,22.83,2.155,31.989-2.492 C311.11,203.139,299.498,205.421,289.626,201.387z"></path>
-                        </g>
-                    </g></g>
-                            <g id="hexatar-eyebrows"><g class="hexatar-base">
-                        <g class="hexatar-eyebrows-right"> 	<path class="col-obj" style="fill: rgb(66, 66, 66);" d="M177.94,175.889l13.191-2.825l44.548,4.564c3.596,0.426,6.563-2.776,5.866-6.33 l-1.646-8.383l-7.205,3.505l-33.753-6.147C191.657,160.784,184.534,172.754,177.94,175.889L177.94,175.889z"></path>
-                        </g>
-                        <g class="hexatar-eyebrows-left"> 	<path class="col-obj" style="fill: rgb(66, 66, 66);" d="M334.84,175.74l-13.188-2.678l-44.552,4.687 c-3.595,0.437-6.573-2.757-5.886-6.312l1.629-8.425l7.21,3.437l33.757-6.215C321.096,160.708,328.229,172.641,334.84,175.74 L334.84,175.74z"></path> 	<path class="shadow-obj" style="opacity: 0.4; fill: rgb(40, 40, 40);" d="M334.84,175.74l-13.188-2.678l-44.552,4.687 c-3.595,0.437-6.573-2.757-5.886-6.312l1.629-8.425l7.21,3.437l33.757-6.215C321.096,160.708,328.229,172.641,334.84,175.74 L334.84,175.74z"></path>
-                        </g>
-                    </g></g>	
-                        </g>
-                        <g id="hexatar-hair-front"><g class="element-front">
-                            <polygon class="col-obj" style="fill: rgb(66, 66, 66);" points="256.211,6.901 153.602,71.356 153.602,175.3 172.515,175.3  172.515,72.492 256.211,118.851 339.49,73.22 339.49,175.3 358.402,175.3 358.403,71.356"></polygon>
-                            <polygon class="shadow-obj" style="opacity: 0.4; fill: rgb(40, 40, 40);" points="256.211,6.901 256.211,118.851 339.49,73.22 339.49,175.3  358.402,175.3 358.403,71.356"></polygon>
-                        </g></g>
-                        <g id="hexatar-hat"></g>
-                        <g id="hexatar-eyeglasses"><g class="hexatar-base">
-                        <g class="hexatar-eyeglasses-right">
-                            <path class="col-obj" style="fill: rgb(33, 33, 33);" d="M256,184.966c-1.542-0.184-7.147-0.91-9.686-1.695 c-27.881-8.619-59.855-4.313-65.372-2.363c-2.181,0.771-5.952,3.875-7.843,5.49c-0.723,0.618-1.1,1.515-1.1,2.466v5.03 c0,1.487,1.125,2.783,2.566,3.148c0.177,5.826,1.419,9.463,2.779,10.528c18.454,14.464,63.289,10.873,69.724-6.637 c1.175-3.197,1.518-6.705,2.523-10.165c1.075-0.874,4.867-1.32,6.409-1.333V184.966z M242.214,200.882 c-12.212,15.665-47.363,12.356-56.942,6.588c-6.517-3.925-4.736-19.925,1.837-23.095c5.681-2.74,38.163-3.541,49.002-0.289 C248.556,187.82,243.424,199.33,242.214,200.882z"></path>
-                        </g>
-                        <g class="hexatar-eyeglasses-left">
-                            <path class="col-obj" style="fill: rgb(33, 33, 33);" d="M256,189.435c2,0.013,5.54,0.458,6.615,1.333 c1.004,3.46,1.553,6.969,2.728,10.165c6.435,17.51,51.212,21.101,69.666,6.637c1.36-1.066,2.483-4.702,2.66-10.528 c1.441-0.365,2.331-1.661,2.331-3.148v-5.03c0-0.951-0.2-1.848-0.923-2.466c-1.891-1.615-5.486-4.719-7.667-5.49 c-5.517-1.95-37.609-6.255-65.49,2.363c-2.539,0.785-7.921,1.511-9.921,1.695V189.435z M276.361,184.086 c10.839-3.251,43.32-2.451,49.002,0.289c6.573,3.17,8.354,19.17,1.837,23.095c-9.58,5.768-44.73,9.077-56.942-6.588 C269.047,199.33,263.915,187.82,276.361,184.086z"></path>
-                            <path class="shadow-obj" style="opacity: 0.4; fill: rgb(7, 7, 7);" d="M256,189.435c2,0.013,5.54,0.458,6.615,1.333 c1.004,3.46,1.553,6.969,2.728,10.165c6.435,17.51,51.212,21.101,69.666,6.637c1.36-1.066,2.483-4.702,2.66-10.528 c1.441-0.365,2.331-1.661,2.331-3.148v-5.03c0-0.951-0.2-1.848-0.923-2.466c-1.891-1.615-5.486-4.719-7.667-5.49 c-5.517-1.95-37.609-6.255-65.49,2.363c-2.539,0.785-7.921,1.511-9.921,1.695V189.435z M276.361,184.086 c10.839-3.251,43.32-2.451,49.002,0.289c6.573,3.17,8.354,19.17,1.837,23.095c-9.58,5.768-44.73,9.077-56.942-6.588 C269.047,199.33,263.915,187.82,276.361,184.086z"></path>
-                        </g>
-                    </g></g>
-                    </g>
-                    <desc>Avatar generated from Hexatar.com - created with Snap</desc><text transform="matrix(1 0 0 1 0 528)" font-size="12">Avatar generated from Hexatar.com</text></svg>
-            </aside>
-        </main>
-        <footer>
-                <!-- web footer -->
-        </footer>
-
-    </body>
-
+            <div class="d-flex flex-row">
+                <div class="col-sm-11 col-lg-11 m-1 bg-warning">parameters:
+                    <ul class="list-group"> 
+                        <li class="list-group-item list-group-item-action list-group-item-light"><span class="badge">&#128567;</span>param 1</li>
+                        <li class="list-group-item list-group-item-action list-group-item-light"><span class="badge">&#128137;</span>param 2</li>
+                        <li class="list-group-item list-group-item-action list-group-item-light"><span class="badge">&#128138;</span>param 3</li>
+                        <li class="list-group-item list-group-item-action list-group-item-light"><span class="badge">M</span>param 4</li>
+                        
+                    </ul> 
+                </div>
+            </div>
+    </main>
+    <footer>
+            <!-- web footer -->
+    </footer>
+    <!--JQuery-->   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <!--Popper-->   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <!--Bootstrap--><script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
 </html>
