@@ -31,7 +31,9 @@
       </div>
       <div class="row m-10">
           <div class="col-lg-11 my-1 p-3 bg-light">parameters:{{ msg }}
-              <multi-slider val1="40"></multi-slider>
+              <multi-slider class="my-1 bg-primary"></multi-slider>
+              <multi-slider class="my-1"></multi-slider>
+              <multi-slider class="my-1"></multi-slider>
           </div>
       </div>
     </main>

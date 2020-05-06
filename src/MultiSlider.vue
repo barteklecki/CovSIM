@@ -1,51 +1,80 @@
 <template>
-    <div id="multiSlider" @click="getClick($event)">
-        <div id="msBar" class="bg-warning" :style="{width:msVal+'% !important'}">{{ msVal + msUnit }}</div>
-        <div>X</div>
+    <div id="multiSlider" @click="getClick($event)" @dblclick="resetBar()" :style="{background: grid}">
+        <div id="msBar" :style="[{'margin-left': relA + '%'},{width: relAB +'%'}]">{{ valA + ' ' + valAB }}</div>
     </div>
 </template>
 
 <script>
 // import
 export default {
-    data: function() { 
-        //props: [valA, valB];
+    // props () {
+    // },
+    data() { 
         return {
-        msVal:          50,                     // 0-100% width of bar
-        msMin:          0,                      // limit lower to msMin
-        msMax:          100,                    // limit upper to msMax
-        msUnit:         '%'                     // units
+        active: true,   // component active & can be controled
+        steps:  50,     // number of descrete steps from 0 to 100%
+        valA:   0,      // bar starting in steps
+        valAB:  0,      // bar lenght   in steps
+        relA:   0,      // bar starting relative in %
+        relAB:  0,      // bar lenght   relative in %
+        min:    0,      // limit lower A (0 -> no limit)
+        max:    0,      // limit upper B (0 -> no limit)
+        units:  'd',    // units
+        grid:   '0'     // placeholder for bg grid string
         };
     },
+    computed: {
+        emitVal() {
+            this.$emit('valA',  this.valA);
+            this.$emit('valB',  this.valA + this.valAB);
+            this.$emit('valAB', this.valAB);
+            this.$emit('val',   [this.active, this.steps, this.valA, this.valAB, this.units]);
+        },
+        getBGGrad() {
+            let i = (1 / this.steps) * 100;
+            this.grid = 'repeating-linear-gradient(90deg, white, white '+i+'%, #f8f8f8 '+i+'%, #f8f8f8 '+(i*2)+'%)'
+        }
+    },
+    created: function () {
+        this.getBGGrad;
+    },
     methods: {
-        getClick: function(e) {
-            var bar = document.getElementById('multiSlider');
-            this.msVal = (e.pageX - bar.getBoundingClientRect().left)*100/bar.clientWidth;
-            ;
+        getClick(event) {
+            let el = document.getElementById('multiSlider');
+            let length = el.clientWidth;
+            let pos = event.pageX - el.getBoundingClientRect().left;
+            let step = Math.round(pos / (length / this.steps));
+            if (this.min && step < this.min) { step = this.min }
+            if (this.max && step > this.max) { step = this.max }
+            this.setBar(step);
+            this.getBGGrad;
         },
-        getTogglePointsCount: function() {
+        setBar(step) { //      [ 1       A|||||┋|||||B         2 ]
+            if (!this.active) { return; }
+            if        (step > this.valA && this.valAB == 0) {   // 0
+                this.valA  = step;                  
+                this.valAB = 1;
+            } else if (step < this.valA + (this.valAB/2)) {     // 1                                        
+                this.valAB = this.valAB + this.valA - step;
+                this.valA  = step;
+            } else if (step >= this.valA + (this.valAB/2) ) {   // 2                     
+                this.valAB = step - this.valA;                 
+            } else {
+                console.log('-ms-idle-click-');
+            }
+            this.relA  = this.valA  / this.steps * 100;
+            this.relAB = this.valAB / this.steps * 100;
+            
+            this.emitVal;
+            console.log('Multi-Slider => A:'+this.valA+'  AB:'+this.valAB);
             return;
         },
-        msReset: function() {
+        resetBar() {
+            this.valA  = 0;
+            this.valAB = 0;
             return;
-        },
-        setMin: function(value) {
-            return;
-        },
-        setMax: function(value) {
-            return;
-        },
-        getStripSize: function(value) {
-            return;
-        },
-        displayMin: function(value) {
-            return;
-        },
-        displayMax: function(value) {
-            return;
-        },
-        
-    }
+        }
+    }      
 }
 </script>
 
@@ -55,16 +84,20 @@ export default {
         border-color: black;
         border-style: solid;
         height: 30px;
+        
     }
 
-    #msBar{
-        background-color: blue;
-        border-width: 0px;
-        border-color: brown;
-        border-style: solid;
-        height: 28px;
+    #msBar {
+        background-color: aquamarine;
+        height: 100%;
+        font-size: 8px;
+        border-left-width: 0px;
+        border-left-style: solid;
+        border-left-color: #ff9c77;
+        border-right-width: 0px;
+        border-right-style: solid;
+        border-right-color: #ff9c77;
+        cursor: col-resize;
     }
-
-
 
 </style>
