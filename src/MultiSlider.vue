@@ -5,7 +5,7 @@
 </template>
 
 <script>
-// import
+
 export default {
     // props () {
     // },
