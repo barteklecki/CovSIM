@@ -31,9 +31,12 @@
       </div>
       <div class="row m-10">
           <div class="col-lg-11 my-1 p-3 bg-light">parameters:{{ msg }}
-              <multi-slider class="my-1 bg-primary"></multi-slider>
-              <multi-slider class="my-1"></multi-slider>
-              <multi-slider class="my-1"></multi-slider>
+              <multi-slider class="my-1" style="height: 30px" :msSteps="10"  :msA="0" :msAB="0"></multi-slider>
+              <multi-slider class="my-1" style="height: 30px" :msSteps="25"  :msA="5" :msAB="10"></multi-slider>
+              <multi-slider class="my-1" style="height: 30px" :msSteps="50"  :msA="0" :msAB="0"></multi-slider>
+              <multi-slider class="my-1" style="height: 30px" :msSteps="100" :msA="0" :msAB="0" :msMin="10" :msMax="80"></multi-slider>
+
+
           </div>
       </div>
     </main>

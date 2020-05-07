@@ -1,5 +1,5 @@
 <template>
-    <div id="multiSlider" @click="getClick($event)" @dblclick="resetBar()" :style="{background: grid}">
+    <div id="multiSlider"  @click="getClick($event)" @dblclick="resetBar()" :style="{background: grid}">
         <div id="msBar" :style="[{'margin-left': relA + '%'},{width: relAB +'%'}]">{{ valA + ' ' + valAB }}</div>
     </div>
 </template>
@@ -7,23 +7,44 @@
 <script>
 
 export default {
-    // props () {
-    // },
+    props: {
+        msActive:   {type: Boolean,default: true},
+        msSteps:    {type: Number, default: 100},
+        msA:        {type: Number, default: 0},
+        msAB:       {type: Number, default: 0},
+        msMin:      {type: Number, default: 0},
+        msMax:      {type: Number, default: 0},
+    
+    },
     data() { 
         return {
         active: true,   // component active & can be controled
-        steps:  50,     // number of descrete steps from 0 to 100%
+        steps:  100,     // number of descrete steps from 0 to 100%
         valA:   0,      // bar starting in steps
         valAB:  0,      // bar lenght   in steps
         relA:   0,      // bar starting relative in %
         relAB:  0,      // bar lenght   relative in %
         min:    0,      // limit lower A (0 -> no limit)
         max:    0,      // limit upper B (0 -> no limit)
-        units:  'd',    // units
-        grid:   '0'     // placeholder for bg grid string
+        grid:  '0'      // placeholder for bg grid string
         };
     },
+    mounted() {         // init & data repationships
+        this.setData;
+        this.getBGGrad;
+    },
     computed: {
+        setData() {
+            //console.log('Multi-Slider -> \nStep:'+this.msSteps+' A:'+this.msA+' AB:'+this.msAB);
+            this.steps  = this.msSteps;       
+            this.valA   = this.msA;       
+            this.valAB  = this.msAB;      
+            this.min = this.msMin;  
+            this.max = this.msMax;  
+            
+            this.relA  = this.valA  / this.steps * 100;
+            this.relAB = this.valAB / this.steps * 100; 
+        },
         emitVal() {
             this.$emit('valA',  this.valA);
             this.$emit('valB',  this.valA + this.valAB);
@@ -34,9 +55,6 @@ export default {
             let i = (1 / this.steps) * 100;
             this.grid = 'repeating-linear-gradient(90deg, white, white '+i+'%, #f8f8f8 '+i+'%, #f8f8f8 '+(i*2)+'%)'
         }
-    },
-    created: function () {
-        this.getBGGrad;
     },
     methods: {
         getClick(event) {
@@ -72,9 +90,12 @@ export default {
         resetBar() {
             this.valA  = 0;
             this.valAB = 0;
+            this.relA  = 0;
+            this.relAB = 0;
             return;
         }
-    }      
+    }
+
 }
 </script>
 
@@ -83,8 +104,7 @@ export default {
         border-width: 1px;
         border-color: black;
         border-style: solid;
-        height: 30px;
-        
+        height: 100%;
     }
 
     #msBar {
@@ -98,6 +118,7 @@ export default {
         border-right-style: solid;
         border-right-color: #ff9c77;
         cursor: col-resize;
+        min-height: 10px;
     }
 
 </style>
