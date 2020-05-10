@@ -1,97 +1,82 @@
+<!--       [0                   A||||||||||||||┋||||||||||||||||B                   steps]             -->
 <template>
-    <div id="multiSlider"  @click="getClick($event)" @dblclick="resetBar()" :style="{background: grid}">
-        <div id="msBar" :style="[{'margin-left': relA + '%'},{width: relAB +'%'}]">{{ valA + ' ' + valAB }}</div>
+    <div :id="'ms'+val.id" class="ms" @click="getClick($event)" @dblclick="resetBar()" :style="{background: grid}">
+        <div class="msBar" :class="{disactive: !val.active}" :style="[{'margin-left': relA + '%'},{width: relAB +'%'}]"><!--{{val.valA + ' ' + val.valB }}--></div>
     </div>
 </template>
 
 <script>
-
 export default {
     props: {
-        msActive:   {type: Boolean,default: true},
-        msSteps:    {type: Number, default: 100},
-        msA:        {type: Number, default: 0},
-        msAB:       {type: Number, default: 0},
-        msMin:      {type: Number, default: 0},
-        msMax:      {type: Number, default: 0},
-    
+        val: { 
+            type: Object,
+            default: function() { return {
+                id:     0,     // unique identifier
+                active: true,  // component is active
+                steps:  10,    // number of discrete steps
+                valA:   0,     // bar starting point
+                valB:   0,     // bar ending point
+                min:    0,     // lower value limiter (0=no limit)
+                max:    0      // upper value limiter (0=no limit)
+            }; }
+        }
     },
-    data() { 
-        return {
-        active: true,   // component active & can be controled
-        steps:  100,     // number of descrete steps from 0 to 100%
-        valA:   0,      // bar starting in steps
-        valAB:  0,      // bar lenght   in steps
-        relA:   0,      // bar starting relative in %
-        relAB:  0,      // bar lenght   relative in %
-        min:    0,      // limit lower A (0 -> no limit)
-        max:    0,      // limit upper B (0 -> no limit)
-        grid:  '0'      // placeholder for bg grid string
-        };
-    },
-    mounted() {         // init & data repationships
-        this.setData;
+    data() { return { 
+        relA:    0,             // bar starting relative in %
+        relAB:   0,             // bar lenght   relative in %
+        grid:    ''             // placeholder for bg grid string
+    }; },
+    mounted() {                 // init & data repationships
+        this.setBar(this.val.valA);
         this.getBGGrad;
     },
     computed: {
-        setData() {
-            //console.log('Multi-Slider -> \nStep:'+this.msSteps+' A:'+this.msA+' AB:'+this.msAB);
-            this.steps  = this.msSteps;       
-            this.valA   = this.msA;       
-            this.valAB  = this.msAB;      
-            this.min = this.msMin;  
-            this.max = this.msMax;  
-            
-            this.relA  = this.valA  / this.steps * 100;
-            this.relAB = this.valAB / this.steps * 100; 
-        },
-        emitVal() {
-            this.$emit('valA',  this.valA);
-            this.$emit('valB',  this.valA + this.valAB);
-            this.$emit('valAB', this.valAB);
-            this.$emit('val',   [this.active, this.steps, this.valA, this.valAB, this.units]);
-        },
         getBGGrad() {
-            let i = (1 / this.steps) * 100;
-            this.grid = 'repeating-linear-gradient(90deg, white, white '+i+'%, #f8f8f8 '+i+'%, #f8f8f8 '+(i*2)+'%)'
+            let i = (1 / this.val.steps) * 100;
+            this.grid = 'repeating-linear-gradient(90deg, white, white '+i+'%, #f8f8f8 '+i+'%, #f8f8f8 '+(i*2)+'%)';
         }
     },
     methods: {
         getClick(event) {
-            let el = document.getElementById('multiSlider');
+            let el = document.getElementById('ms'+this.val.id);      
             let length = el.clientWidth;
             let pos = event.pageX - el.getBoundingClientRect().left;
-            let step = Math.round(pos / (length / this.steps));
-            if (this.min && step < this.min) { step = this.min }
-            if (this.max && step > this.max) { step = this.max }
+            let step = Math.round(pos / (length / this.val.steps));
+            if (this.val.min && step < this.val.min) { step = this.val.min; }  // range validation
+            if (this.val.max && step > this.val.max) { step = this.val.max; }
             this.setBar(step);
             this.getBGGrad;
         },
-        setBar(step) { //      [ 1       A|||||┋|||||B         2 ]
-            if (!this.active) { return; }
-            if        (step > this.valA && this.valAB == 0) {   // 0
-                this.valA  = step;                  
-                this.valAB = 1;
-            } else if (step < this.valA + (this.valAB/2)) {     // 1                                        
-                this.valAB = this.valAB + this.valA - step;
-                this.valA  = step;
-            } else if (step >= this.valA + (this.valAB/2) ) {   // 2                     
-                this.valAB = step - this.valA;                 
-            } else {
-                console.log('-ms-idle-click-');
+        setData() {          
+            this.relA  = this.val.valA  / this.val.steps * 100;
+            this.relAB = (this.val.valB-this.val.valA) / this.val.steps * 100;
+        },
+        setBar(step) {                      //     [ 1       A|||||┋|||||B         2 ]
+            if (!this.val.active) { 
+                console.log('[component deactivated]');
+                return; 
             }
-            this.relA  = this.valA  / this.steps * 100;
-            this.relAB = this.valAB / this.steps * 100;
-            
-            this.emitVal;
-            console.log('Multi-Slider => A:'+this.valA+'  AB:'+this.valAB);
+            if (step > this.val.valA && this.val.valB == 0) {                       // 0
+                this.val.valA  = step;                  
+                this.val.valB = this.val.steps;
+            } else if (step < this.val.valA + ((this.val.valB-this.val.valA)/2)) {  // 1                                        
+                this.val.valA = step;
+            } else if (step >= this.val.valA + ((this.val.valB-this.val.valA)/2)) { // 2                     
+                this.val.valB = step;                 
+            } else {
+                console.log('[ms-idle-click]');
+            }
+            this.relA  = this.val.valA  / this.val.steps * 100;
+            this.relAB = (this.val.valB-this.val.valA) / this.val.steps * 100;
+            if (!this.val.id) { this.val.id = Math.round(Math.random()*10000); } //generating unique id
+            // $emit here
             return;
         },
         resetBar() {
-            this.valA  = 0;
-            this.valAB = 0;
-            this.relA  = 0;
-            this.relAB = 0;
+            this.val.valA = 0;
+            this.val.valB = 0;
+            this.relA     = 0;
+            this.relAB    = 0;
             return;
         }
     }
@@ -100,14 +85,16 @@ export default {
 </script>
 
 <style>
-    #multiSlider {
+    .ms {
         border-width: 1px;
-        border-color: black;
+        border-color: #707070;
         border-style: solid;
+        border-radius: 3px;
         height: 100%;
+        width: 100%;
     }
 
-    #msBar {
+    .msBar {
         background-color: aquamarine;
         height: 100%;
         font-size: 8px;
@@ -117,8 +104,16 @@ export default {
         border-right-width: 0px;
         border-right-style: solid;
         border-right-color: #ff9c77;
-        cursor: col-resize;
         min-height: 10px;
+        cursor: col-resize;
+    }
+
+    .disactive {
+        background-color: #d3d3d39f;
+        border-width: 1px;
+        border-style: solid;
+        border-color: #cacaca9f;
+        cursor: not-allowed;
     }
 
 </style>

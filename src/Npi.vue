@@ -1,0 +1,66 @@
+<template>
+    <div id="npi" class="container container-primary p-0 my-1" style="width: 100%, border-weight: 1px, boredr-style: solid, border-color: black">
+        <div class="row">
+        <div class="col col-lg-4 pr-0 justify-content-end" style="border-weight: 1px, boredr-style: solid, border-color: black">
+            <div class="btn-group d-flex" role="group">
+                <button class="btn btn-outline-secondary btn-sm" style="height=30px">&#10060;</button>
+                <button class="btn btn-outline-secondary btn-sm w-100">
+                    [npi title]
+                </button>
+                <button class="btn btn-outline-secondary btn-sm text-left w-100" style="height=30px">
+                    &#128197; {{calenderOutput()}}
+                </button>
+                <button v-if="this.val.active"  class="btn btn-outline-secondary btn-sm" @click="activation" style="height=30px">&#9873;</button>
+                <button v-if="!this.val.active" class="btn btn-secondary text-light btn-sm" @click="activation" style="height=30px">&#9872;</button>
+                <button class="btn btn-outline-secondary btn-sm" style="height=30px">&#9776;</button>
+            </div>
+        </div>
+        <div class="col col-lg-8">
+            <div>
+                <multi-slider :val="val" style="height: 30px"></multi-slider>
+            </div>
+        </div>
+        </div>
+    </div>      
+</template>
+
+<script>
+//import Vue from 'vue';
+import multiSlider from './MultiSlider.vue';
+export default {
+    components: {
+        'multi-slider': multiSlider
+    },
+    data() { return {
+        val: {
+            active: true,
+            id:      0,
+            steps:  20,
+            valA:    0,
+            valB:    0,
+            min:     0,
+            max:     0,
+        }
+         
+    }},
+    methods: {
+        activation() {
+            this.val.active = !this.val.active;
+        },
+        calenderOutput() {
+            let cal = '';
+            cal = this.val.valA + '-' + this.val.valB;
+            cal.padEnd(9,'_');
+            console.log(cal);
+            return cal;
+        }
+    }
+}
+</script>
+
+<style>
+    .barInfo {
+        font-size: 0.7em;
+        color:darkgray;
+    }
+</style>

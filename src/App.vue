@@ -25,28 +25,35 @@
     </nav>
     <!-- CONTENT -->
     <main class="container">
-      <div class="row align-items-center m-10">
-          <div class="col-lg-3 my-1 p-3 bg-dark text-light">options</div>
+      <div class="row align-items-center m-12">
+          <div class="col-lg-4 my-1 p-3 bg-dark text-light">options</div>
           <div class="col-lg-8 my-1 p-3 bg-light text-right">graph</div>
       </div>
       <div class="row m-10">
-          <div class="col-lg-11 my-1 p-3 bg-light">parameters:{{ msg }}
-              <multi-slider class="my-1" style="height: 30px" :msSteps="10"  :msA="0" :msAB="0"></multi-slider>
-              <multi-slider class="my-1" style="height: 30px" :msSteps="25"  :msA="5" :msAB="10"></multi-slider>
-              <multi-slider class="my-1" style="height: 30px" :msSteps="50"  :msA="0" :msAB="0"></multi-slider>
-              <multi-slider class="my-1" style="height: 30px" :msSteps="100" :msA="0" :msAB="0" :msMin="10" :msMax="80"></multi-slider>
+          <div class="col-lg-12 my-1 p-3 bg-light">
+              <comp-npi></comp-npi>
+              <comp-npi></comp-npi>
+              <comp-npi></comp-npi>
+              <comp-npi></comp-npi>
+              <comp-npi></comp-npi>
+              <comp-npi></comp-npi>
+              <comp-npi></comp-npi>
           </div>
       </div>
     </main>
-    <footer>
-            <!-- web footer -->
+    <footer class="page-footer font-small indigo fixed-bottom">
+      <div class="footer-copyright text-center py-3 text-light">Copyright 2020</div> 
     </footer>
   </div>
 </template>
 
 <script>
+import Npi from './Npi.vue';
 export default {
   name: 'app',
+  components: {
+    'comp-npi': Npi
+  },
   data () {     // <-- ES6 syntax or data: function () {
     return {
       msg: 'Info'
