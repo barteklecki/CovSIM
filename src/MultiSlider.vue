@@ -51,12 +51,10 @@ export default {
             this.relA  = this.val.valA  / this.val.steps * 100;
             this.relAB = (this.val.valB-this.val.valA) / this.val.steps * 100;
         },
-        setBar(step) {                      //     [ 1       A|||||┋|||||B         2 ]
+        setBar(step) {                       //     [ 1       A|||||┋|||||B         2 ]
             if (!this.val.active) { 
-                console.log('[component deactivated]');
-                return; 
-            }
-            if (step > this.val.valA && this.val.valB == 0) {                       // 0
+                console.log('[component deactivated]'); 
+            } else if (step > this.val.valA && this.val.valB == 0) {                // 0
                 this.val.valA  = step;                  
                 this.val.valB = this.val.steps;
             } else if (step < this.val.valA + ((this.val.valB-this.val.valA)/2)) {  // 1                                        
@@ -73,11 +71,14 @@ export default {
             return;
         },
         resetBar() {
-            this.val.valA = 0;
-            this.val.valB = 0;
-            this.relA     = 0;
-            this.relAB    = 0;
+            if (this.val.active) {
+                this.val.valA = 0;
+                this.val.valB = 0;
+                this.relA     = 0;
+                this.relAB    = 0;
+            }
             return;
+
         }
     }
 

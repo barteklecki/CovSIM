@@ -3,21 +3,21 @@
         <div class="row">
         <div class="col col-lg-4 pr-0 justify-content-end" style="border-weight: 1px, boredr-style: solid, border-color: black">
             <div class="btn-group d-flex" role="group">
-                <button class="btn btn-outline-secondary btn-sm" style="height=30px">&#10060;</button>
+                <button class="btn btn-outline-secondary btn-sm" @click="set.visible = !set.visible">&#10060;</button>
                 <button class="btn btn-outline-secondary btn-sm w-100">
-                    [npi title]
+                    {{ set.name }}
                 </button>
-                <button class="btn btn-outline-secondary btn-sm text-left w-100" style="height=30px">
+                <button class="btn btn-outline-secondary btn-sm text-left w-100 min-w-10">
                     &#128197; {{calenderOutput()}}
                 </button>
-                <button v-if="this.val.active"  class="btn btn-outline-secondary btn-sm" @click="activation" style="height=30px">&#9873;</button>
-                <button v-if="!this.val.active" class="btn btn-secondary text-light btn-sm" @click="activation" style="height=30px">&#9872;</button>
-                <button class="btn btn-outline-secondary btn-sm" style="height=30px">&#9776;</button>
+                <button v-if="this.val.active"  class="btn btn-outline-secondary btn-sm" @click="activation">&#9989;</button>
+                <button v-if="!this.val.active" class="btn btn-secondary text-light btn-sm" @click="activation">&#9940;</button>
+                <button class="btn btn-outline-secondary btn-sm">&#9776;</button>
             </div>
         </div>
         <div class="col col-lg-8">
             <div>
-                <multi-slider :val="val" style="height: 30px"></multi-slider>
+                <multi-slider :val="val" style="height: 31px"></multi-slider>
             </div>
         </div>
         </div>
@@ -25,22 +25,25 @@
 </template>
 
 <script>
-//import Vue from 'vue';
 import multiSlider from './MultiSlider.vue';
 export default {
     components: {
         'multi-slider': multiSlider
     },
+    props: {
+        val: { type: Object },
+        set: { type: Object }
+    },
     data() { return {
-        val: {
-            active: true,
-            id:      0,
-            steps:  20,
-            valA:    0,
-            valB:    0,
-            min:     0,
-            max:     0,
-        }
+        // val: {
+        //     active: true,
+        //     id:      0,
+        //     steps:  50,
+        //     valA:    0,
+        //     valB:    0,
+        //     min:     0,
+        //     max:     0,
+        // }
          
     }},
     methods: {
