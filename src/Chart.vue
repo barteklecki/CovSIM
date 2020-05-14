@@ -1,65 +1,29 @@
-<template>
-    <div>
-        <canvas id="myChart" width="600" height="300"></canvas>
-    </div>
-</template>
+<!--<template></template>-->
 
 <script>
-import Chart from 'chart.js';
+import { Line, mixins } from 'vue-chartjs'
+const { reactiveProp } = mixins
+
 export default {
-    data() { return {
-        ctx: 0
-    };},
-    created(){
-        this.initChrat();
-        console.log('[Chart.vue created]');
+    extends: Line,
+    mixins: [mixins.reactiveProp],
+    props: ['options'], 
+    mounted () {
+        this.renderChart(this.chartData, this.options)
+    },
+    updated () {
+        console.log('⚡ I am updated');
     },
     methods: {
-        initChrat() {
-            //this.ctx = document.getElementById('myChart').getContext('2d');
-            this.ctx = document.getElementById('myChart')
-            ////
-            var myChart = new Chart(this.ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                    datasets: [{
-                        label: '# of Votes',
-                        data: [12, 19, 3, 5, 2, 3],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true
-                            }
-                        }]
-                    }
-                }
-            });
+        update(newData) {
+            console.log('updating', newData)
+            this.chartData.datasets.push(newData)
+            this._chart.update()      
         }
     }
 }
 </script>
 
 <style>
-
+    
 </style>

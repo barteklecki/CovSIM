@@ -1,5 +1,5 @@
 <template>
-    <div id="npi" class="container container-primary p-0 my-1" style="width: 100%, border-weight: 1px, boredr-style: solid, border-color: black">
+    <div id="npi" class="container container-primary p-0 my-1" style="width: 100%, border-weight: 1px, boredr-style: solid, border-color: black" @click="refresh()">
         <div class="row">
         <div class="col col-lg-4 pr-0 justify-content-end" style="border-weight: 1px, boredr-style: solid, border-color: black">
             <div class="btn-group d-flex" role="group">
@@ -8,10 +8,10 @@
                     {{ set.name }}
                 </button>
                 <button class="btn btn-outline-secondary btn-sm text-left w-100 min-w-10">
-                    &#128197; {{calenderOutput()}}
+                    &#128197; {{ calenderOutput() }}
                 </button>
                 <button v-if="this.val.active"  class="btn btn-outline-secondary btn-sm" @click="activation">&#9989;</button>
-                <button v-if="!this.val.active" class="btn btn-secondary text-light btn-sm" @click="activation">&#9940;</button>
+                <button v-else class="btn btn-secondary text-light btn-sm" @click="activation">&#9940;</button>
                 <button class="btn btn-outline-secondary btn-sm">&#9776;</button>
             </div>
         </div>
@@ -34,18 +34,6 @@ export default {
         val: { type: Object },
         set: { type: Object }
     },
-    data() { return {
-        // val: {
-        //     active: true,
-        //     id:      0,
-        //     steps:  50,
-        //     valA:    0,
-        //     valB:    0,
-        //     min:     0,
-        //     max:     0,
-        // }
-         
-    }},
     methods: {
         activation() {
             this.val.active = !this.val.active;
@@ -53,9 +41,12 @@ export default {
         calenderOutput() {
             let cal = '';
             cal = this.val.valA + '-' + this.val.valB;
-            cal.padEnd(9,'_');
-            console.log(cal);
+            //cal.padEnd(9,'_');
+            //console.log(cal);
             return cal;
+        },
+        refresh() {
+            console.log('NPI CLICK!');
         }
     }
 }
