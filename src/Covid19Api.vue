@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <slot></slot> {{ str}}
+    <div @click="covGet">
+        <slot></slot> {{ str }}
     </div>
 </template>
 
@@ -15,18 +15,18 @@ export default {
     methods: {
         covGet() {
             this.$http.get('https://api.covid19api.com/summary')
-                .then(response => { return response.json();})
-                .then(data => { this.obj = data });
-            //console.log(this.obj.Global.TotalConfirmed);
-            console.log(this.obj);
-            console.log(this.obj.ok);
-            if (!this.obj.ok) {
-                console.log('[HTTP-ERR: Too Many Requests]');
-                this.str = '[HTTP-ERR: Too Many Requests]';
-            } else {
-                console.log(this.obj);
-            }
-        // then(data => console.log(data.Global.TotalConfirmed));
+                .then(response => { 
+                    console.log('RES: '+response)
+                    return response.json();
+                })
+                .then(data => { 
+                    this.obj = data;
+                    console.log('DATA: '+data);
+                    console.log('OBJ: '+this.obj);
+
+                });
+
+
         }
     },
     created() {

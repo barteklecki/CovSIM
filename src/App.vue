@@ -22,13 +22,24 @@
           </li>
         </ul>
       </div>
+      <!-- SHARE -->
+      <form class="form-inline">
+        <div class="form-group form-group-sm">
+          <input type="text" readonly class="form-control form-control-sm mr-2" id="link" :value="shareLink">
+        </div>
+        <button @click="nodeSubmit" class="btn btn-outline-dark btn-sm mr-5">SHARE</button>
+        <button @click="nodeFetch"  class="btn btn-outline-dark btn-sm mr-5">FETCH</button>
+      </form>
+
     </nav>
     <!-- CONTENT -->
     <main class="container mt-5">
       <div class="row align-items-center m-12">
-          <div class="col-lg-3 my-1 p-3 bg-dark text-light align-self-stretch">options</div>
+          <div class="col-lg-3 my-1 p-3 bg-dark text-light align-self-stretch">
+            <app-settings :set="set"></app-settings>
+          </div>
           <div class="chart-container col-lg-9 my-1 p-3 bg-light text-right">
-            <app-chart class="float-right" ref="child"
+            <app-chart class="float-right"
                 :chart-data="chartdata" 
                 :options="options" 
                 style="width: 90%"
@@ -40,7 +51,7 @@
           <div class="col-lg-12 my-1 p-3 bg-light">
               <comp-npi 
                   v-if="n.visible" 
-                  v-for="n in NPIs" 
+                  v-for="n in npis" 
                   :val="n.val" 
                   :set="n" 
                   :key="">
@@ -50,7 +61,7 @@
                   &#65291;
                 </button>
                 <div class="dropdown-menu shadow-sm" aria-labelledby="dropdownMenuButton">
-                  <a v-if="!n.visible" v-for="n in NPIs" class="dropdown-item" @click="n.visible = !n.visible" href="#" :key="">{{n.name}}</a>
+                  <a v-if="!n.visible" v-for="n in npis" class="dropdown-item" @click="n.visible = !n.visible" href="#" :key="">{{n.name}}</a>
                 </div>
               </div>
           </div>
@@ -69,24 +80,28 @@
 import Npi from './Npi.vue';
 import Cov19Api from './Covid19Api.vue';
 import Chart from './Chart.vue';
+import Settings from './Settings.vue'
 export default {
   name: 'app',
   components: {
     'comp-npi':  Npi,
     'cov-api':   Cov19Api,
-    'app-chart': Chart
+    'app-chart': Chart,
+    'app-settings': Settings
   },
   data () {     
     return {
-      set: {
+      set: {                // default settings
+        title:      '',     // sim title 
         days:       30,     // days of symulation
-        dayZero:    1,      // case count at day zero
-        ro:         0.5,    // pathogen reproduction number
+        dayZero:    10,     // case count at day zero
+        ro:         0.1,    // pathogen reproduction number
         incubation: 1,      // avrage incubation period in days
         hospit:     1,      // avrage hospitalisation period
         ifr:        10,     // avrage infaction fatality rate
+        linlog:     0       // y-axis 0-linear 1-log
       },
-      NPIs: [             // list of non pharm. interventions
+      npis: [               // list of NPIs
         { name: 'aaa', visible: 1, ror: 0.02, val: { id: 0, active: 1, steps: 30, valA:  7, valB: 30, min: 0,max: 0  } },
         { name: 'bbb', visible: 1, ror: 0.05, val: { id: 1, active: 1, steps: 30, valA: 14, valB: 30, min: 0,max: 0  } },
         { name: 'ccc', visible: 1, ror: 0.07, val: { id: 2, active: 1, steps: 30, valA: 21, valB: 30, min: 0,max: 0  } },
@@ -105,12 +120,6 @@ export default {
                 backgroundColor: "#cdffeea0", 
                 fill: 1
             }, { 
-            //     data: [1,4,6],
-            //     label: "Recovered",
-            //     borderColor: "#7fffd4",
-            //     backgroundColor: "#7fffd4a0",
-            //     fill: 2
-            // }, { 
                 data: [1,2,3],
                 label: "Deaths",
                 borderColor: "#4a9179",
@@ -122,7 +131,8 @@ export default {
             responsive: true,
             maintainAspectRatio: false,
             aspectRatio: false,
-      }
+      },
+      shareLink: '[Share Link]'
     }
   },
   methods: {
@@ -138,14 +148,6 @@ export default {
                   pointRadius: 2,
                   fill: 1
               }, { 
-              //     data: [],     // clear array
-              //     label: "Recovered",
-              //     borderColor: "#7fffd4",
-              //     backgroundColor: "#7fffd4a0",
-              //     borderWidth: 1,
-              //     pointRadius: 2,
-              //     fill: 2
-              // }, { 
                   data: [],     // clear array
                   label: "Deaths",
                   borderColor: "#4a9179",
@@ -158,64 +160,112 @@ export default {
           this.curveCalc(this.set.days);
     },
     curveCalc(d){
-        //validation
         d = Math.round(d);
         if (d < 10)                 { d = 10; }
-        //if (d > 365)                { d = 365; }
+        if (d > 365)                { d = 365; }
         if (d == NaN && d == null)  { d = 30; }
-
         // day zero init
         this.chartdata.labels.push(1);
         this.chartdata.datasets[0].data.push(this.set.dayZero);
         this.chartdata.datasets[1].data.push(0);
-        //this.chartdata.datasets[2].data.push(0);
 
         let rro = 0;
         let n = 0;
 
-        for (let i = 1; i < d; i++) { 
-          
+        for (let i = 1; i < d; i++) {   
           this.chartdata.labels.push(i+1);      // chart x-axis add day
           rro = 0;
           n = 0;
           // confirmed cases
-          for (let j = 0; j < this.NPIs.length; j++) {
-            if (this.NPIs[j].visible && this.NPIs[j].val.active && i > this.NPIs[j].val.valA && i < this.NPIs[j].val.valB)                      {
-              rro += this.NPIs[j].ror;
-              console.log('V'+this.NPIs[j].visible+' A'+this.NPIs[j].val.active+' ROR'+this.NPIs[j].ror);
+          for (let j = 0; j < this.npis.length; j++) {
+            if (this.npis[j].visible && this.npis[j].val.active && i > this.npis[j].val.valA && i < this.npis[j].val.valB)                      {
+              rro += this.npis[j].ror;
+              //console.log('V'+this.npis[j].visible+' A'+this.npis[j].val.active+' ROR'+this.npis[j].ror);
             }
           }
           
           if (i - this.set.incubation < 1 || this.set.ro - rro < 0) {
             this.chartdata.datasets[0].data.push(this.chartdata.datasets[0].data[i-1]);
           } else {
-            this.chartdata.datasets[0].data.push(Math.round(((this.set.ro - rro) * this.chartdata.datasets[0].data[i-1])+this.chartdata.datasets[0].data[i-1]));
+            this.chartdata.datasets[0].data.push(Math.round(((this.set.ro - rro) * this.chartdata.datasets[0].data[i-1])+1+this.chartdata.datasets[0].data[i-1]));
           }
-          //this.chartdata.datasets[0].data.push(Math.round(this.set.dayZero*Math.pow(this.set.ro - rro, i)));
-          //console.log('PV: '+this.chartdata.datasets[0].data[i-1])
-          //this.chartdata.datasets[0].data.push(Math.round(this.set.dayZero*Math.pow(this.set.ro - rro, i)));
-          //this.chartdata.datasets[1].data.push(i*20);
-          // if (i - this.set.hospot < 1) {
-          //   this.chartdata.datasets[1].data.push(this.chartdata.datasets[1].data[i-1]);
-          // } else {
-          //   this.chartdata.datasets[1].data.push(Math.round(this.chartdata.datasets[0].data[i-1] * (100 - this.set.ifr / 100)));
-          // }
           if (i - this.set.hospit < 1) {
             this.chartdata.datasets[1].data.push(this.chartdata.datasets[1].data[i-1]);
           } else {
             this.chartdata.datasets[1].data.push(Math.round(this.chartdata.datasets[0].data[i-1] * this.set.ifr / 100 ));
           }          
         }
-        console.log('DAY: '+ this.chartdata.labels);
-        console.log('CH1: '+ this.chartdata.datasets[0].data);
+        //console.log('DAY: '+ this.chartdata.labels);
+        //console.log('CH1: '+ this.chartdata.datasets[0].data);
     },
     refresh() {
+        if (this.npis[0].val.steps !== this.set.days) {
+          for (let i = 0; i < this.npis.length; i++) {
+            if(this.npis[i].val.valB=this.npis[i].val.steps)
+              if(this.npis[i].val.valA < this.set.days) {
+                this.npis[i].val.steps = this.set.days;
+                this.npis[i].val.valB  = this.set.days;
+              } else {
+                this.npis[i].val.valA = 0;
+                this.npis[i].val.valB = 0;
+                this.npis[i].val.steps = this.set.days;
+              }
+          }
+        }
         //console.log('NPI CLICK!');
         this.chartDraw();
+    },
+    nodeSubmit() {
+        // Fire Base Realtime Database connection
+        this.$http.post('https://covsim-7ce15.firebaseio.com/csnode.json', { set: this.set, npis: this.npis} )
+                .then(response => { 
+                      console.log(response);
+                      if(response.status === 200) {   // status 'ok'
+                        this.shareLink = window.location.href+'node='+response.body.name;
+                      } else {
+                        this.shareLink = 'error: '+response.statusText;
+                      }
+                  }, error => {
+                      console.tag('[ERR: no database connection]');
+                });  
+        //console.log('DATA: '+data);
+        //console.log('OBJ: '+this.obj);
+    },
+    nodeFetch() {
+        // Fire Base Realtime Database connection
+        this.$http.get('https://covsim-7ce15.firebaseio.com/csnode/-M7TCmbSNNvaVY6Rm6WI.json')
+                .then(response => { 
+                      // console.log(response);
+                      return response.json();
+                  }, error => {
+                      console.tag('[ERR: no database connection]');
+                })
+                .then( data => {
+                      console.log(data);
+                      this.setByNode(data);
+                });
+    },
+    setByNode(node) {
+        this.set = node.set;
+        this.npis = node.npis;
+        this.refresh();
     }
   },
   mounted () {
     this.chartDraw();
+  },
+  watch: {
+    'set.days': function() {
+      this.refresh();
+      //console.log('WATCH: set.days changed');
+    },
+    set: {
+      handler(val){
+        this.refresh();
+        //console.log('WATCH: SET changed');
+      },
+      deep: true
+    }
   }
 }
 </script>
@@ -232,9 +282,5 @@ body {
   background-color: aquamarine;
 }
 
-  .small {
-    max-width: 600px;
-    margin:  150px auto;
-  }
 
 </style>

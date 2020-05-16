@@ -80,6 +80,13 @@ export default {
             return;
 
         }
+    },
+    watch: { 
+        'val.steps':function() {
+            this.getBGGrad;
+            //console.log('[STEPS CHANGED]');
+        }
+            
     }
 
 }
@@ -96,15 +103,9 @@ export default {
     }
 
     .msBar {
-        background-color: aquamarine;
+        background-color: #7fffd4;
         height: 100%;
         font-size: 8px;
-        border-left-width: 0px;
-        border-left-style: solid;
-        border-left-color: #ff9c77;
-        border-right-width: 0px;
-        border-right-style: solid;
-        border-right-color: #ff9c77;
         min-height: 10px;
         cursor: col-resize;
     }
