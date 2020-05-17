@@ -9,10 +9,6 @@
             <input type="text" id="title" class="form-control form-control-light form-control-sm" aria-describedby="title-help">
         </div>
 
-        <!-- <small id="title-help" class="form-text text-muted">
-            Title describing current simulation
-        </small> -->
-
         <div class="form-group mt-1 form-sm">
             <label for="formControlRange">Days of simulation: <span>{{ set.days }}</span></label>
             <input v-model.lazy="set.days" type="range" class="custom-range custom-range-light mt-0" min="30" max="360" :step="15" id="rangeDays">
@@ -51,7 +47,7 @@
             </div>
         </div>
 
-        <label for="linlog" class="mt-1">Chart Y-axis:</label>
+        <!-- <label for="linlog" class="mt-1">Chart Y-axis:</label>
         <div id="linlog" class="btn-group btn-group-toggle btn-block" data-toggle="buttons" aria-describedby="linlog-help">
             <label class="btn btn-outline-light btn-sm active">
                 <input type="radio" name="options" id="lin" autocomplete="off" checked> Linear
@@ -59,16 +55,24 @@
             <label class="btn btn-outline-light btn-sm">
                 <input type="radio" name="options" id="log" autocomplete="off"> Logarytmic
             </label>
-        </div>
-        <!-- <small id="linlog-help" class="form-text text-muted">
-            Chart Y-axis representation
-        </small> -->
+        </div> -->
     </div>
 </template>
 
 <script>
 export default {
-    props: ['set']   
+    props: ['set'],
+    methode: {
+        RoundCorrect(num, precision = 2) {
+	        // half epsilon to correct edge cases.
+	        var c = 0.5 * Number.EPSILON * num;
+            //	var p = Math.pow(10, precision); //slow
+	        var p = 1; while (precision--> 0) p *= 10;
+	        if (num < 0)
+		    p *= -1;
+	        return Math.round((num + c) * p) / p;
+        }
+    }   
 }
 </script>
 

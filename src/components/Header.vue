@@ -22,17 +22,41 @@
       </div>
       <!-- SHARE -->
       <form class="form-inline">
-        <div class="form-group form-group-sm">
+        <div v-if="shareLink" class="form-group">
           <input type="text" :value="shareLink" readonly class="form-control form-control-sm mr-2" id="link">
         </div>
-        <button @click="$emit('node-submit')" class="btn btn-outline-dark btn-sm mr-5">SHARE</button>
-        <button @click="$emit('node-fetch')"  class="btn btn-outline-dark btn-sm mr-5">FETCH</button>
+        <button :disabled="shareLink ? true : false" @click="nodeSubmit" class="btn btn-outline-dark btn-sm mr-5">SHARE</button>
+        <!-- <button @click="eventBus.$emit('node-fetch')"  class="btn btn-outline-dark btn-sm mr-5">FETCH</button> -->
       </form>
     </nav>    
 </template>
 
 <script>
+import { eventBus } from '../main.js';
+
 export default {
-    props: ['shareLink']
+    //props: ['shareLink'],
+    data() {
+        return {
+            shareLink: ''   // 0 = hiden
+        }
+    },
+    methods: {
+        nodeSubmit() {
+            this.shareLink = "generating link...";
+            eventBus.$emit('node-submit');
+        }
+    },
+    created() {
+        eventBus.$on('set-link', (link) => {
+            this.shareLink = link;
+        });
+    }
 }
 </script>
+
+<style>
+    #link {
+        width: 400px;
+    }
+</style>

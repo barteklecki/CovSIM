@@ -14,8 +14,11 @@ Vue.use(VueResource);
 //   mode: 'hash'         // mode: 'history'
 // });
 
+export const eventBus = new Vue();
+
 new Vue({
   el: '#app',
   //router: router,     // ES5 ->     router
   render: h => h(App)
 })
+
