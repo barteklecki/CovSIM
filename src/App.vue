@@ -1,37 +1,11 @@
 <template>
   <div id="app">
     <!-- HEADER NAV -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light px-3 py-0 mb-3 fixed-top shadow-sm">
-      <a class="navbar-brand mx-3 font-weight-bold" href="#">
-        <img src="./img/covico.svg" width="30" height="30" class="d-inline-block align-top mx-2" alt="">
-        COVSIM
-      </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Sim<span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Tutorial</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">About</a>
-          </li>
-        </ul>
-      </div>
-      <!-- SHARE -->
-      <form class="form-inline">
-        <div class="form-group form-group-sm">
-          <input type="text" readonly class="form-control form-control-sm mr-2" id="link" :value="shareLink">
-        </div>
-        <button @click="nodeSubmit" class="btn btn-outline-dark btn-sm mr-5">SHARE</button>
-        <button @click="nodeFetch"  class="btn btn-outline-dark btn-sm mr-5">FETCH</button>
-      </form>
-
-    </nav>
+    <app-header
+        :shareLink="shareLink"
+        @node-submit="nodeSubmit" 
+        @node-fetch="nodeFetch('-M7TCmbSNNvaVY6Rm6WI')"
+    ></app-header>
     <!-- CONTENT -->
     <main class="container mt-5">
       <div class="row align-items-center m-12">
@@ -77,17 +51,20 @@
 </template>
 
 <script>
-import Npi from './Npi.vue';
-import Cov19Api from './Covid19Api.vue';
-import Chart from './Chart.vue';
-import Settings from './Settings.vue'
+import Header from './components/Header.vue';
+import Npi from './components/Npi.vue';
+import Cov19Api from './components/Covid19Api.vue';
+import Chart from './components/Chart.vue';
+import Settings from './components/Settings.vue'
+
 export default {
   name: 'app',
   components: {
-    'comp-npi':  Npi,
-    'cov-api':   Cov19Api,
+    'app-header': Header,
     'app-chart': Chart,
-    'app-settings': Settings
+    'app-settings': Settings,
+    'comp-npi': Npi,
+    'cov-api': Cov19Api
   },
   data () {     
     return {
@@ -231,9 +208,9 @@ export default {
         //console.log('DATA: '+data);
         //console.log('OBJ: '+this.obj);
     },
-    nodeFetch() {
+    nodeFetch(key) {
         // Fire Base Realtime Database connection
-        this.$http.get('https://covsim-7ce15.firebaseio.com/csnode/-M7TCmbSNNvaVY6Rm6WI.json')
+        this.$http.get('https://covsim-7ce15.firebaseio.com/csnode/'+key+'.json')
                 .then(response => { 
                       // console.log(response);
                       return response.json();
