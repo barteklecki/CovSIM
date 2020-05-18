@@ -4,30 +4,21 @@
     <app-header></app-header>
     <!-- CONTENT -->
     <router-view></router-view>
-    <!-- <app-sim></app-sim> -->
     <!-- FOOTER -->
     <footer class="page-footer font-small indigo">
-      <div class="footer-copyright text-center py-3 text-light">Copyright 2020</div> 
+      <div class="footer-copyright text-center py-3 text-light">Copyright 2020 by BarLec</div> 
     </footer>
   </div>
 </template>
 
 <script>
 import Header from './components/Header.vue';
-import Sim from './components/Sim.vue'
 
 export default {
   name: 'app',
   components: {
-    'app-header': Header,
-    'app-sim': Sim
-  },
-  data() {
-    return {
-        shareLink: '[Share Link]'
-    }
+    'app-header': Header
   }
-
 }
 </script>
 
@@ -35,7 +26,6 @@ export default {
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
   color: #2c3e50;
 }
 

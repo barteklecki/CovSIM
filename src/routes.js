@@ -7,4 +7,5 @@ export const routes = [
     { path: '/sim/:node', component: Sim, props: true, },
     { path: '/tutorial', component: Tutorial },
     { path: '/about', component: About },
+    { path: '*', redirect: '/' }
 ];

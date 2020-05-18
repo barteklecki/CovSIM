@@ -10,7 +10,7 @@
         </div>
 
         <div class="form-group mt-1 form-sm">
-            <label for="formControlRange">Days of simulation: <span>{{ set.days }}</span></label>
+            <label for="formControlRange">Duration of simulation: <span><b>{{ set.days }} days</b></span></label>
             <input v-model.lazy="set.days" type="range" class="custom-range custom-range-light mt-0" min="30" max="360" :step="15" id="rangeDays">
         </div>
 
@@ -20,8 +20,8 @@
             </div>
             <input v-model.lazy="set.dayZero" type="text" id="dayzero" class="form-control form-control-light form-control-sm text-right" aria-describedby="title-help">
             <div class="input-group-append" id="button-addon4">
-                <button @click="set.dayZero += 1" class="btn btn-light" type="button">+</button>
-                <button @click="set.dayZero -= 1" class="btn btn-light" type="button">-</button>
+                <button @click="set.dayZero=chNum(set.dayZero,1)"  class="btn btn-light" type="button">+</button>
+                <button @click="set.dayZero=chNum(set.dayZero,-1)" class="btn btn-light" type="button">-</button>
             </div>
         </div>
 
@@ -31,8 +31,8 @@
             </div>
             <input v-model.lazy="set.ro" type="text" id="ro" class="form-control form-control-light form-control-sm text-right" aria-describedby="title-help">
                         <div class="input-group-append" id="button-addon4">
-                <button @click="set.ro += 0.01" class="btn btn-light" type="button">+</button>
-                <button @click="set.ro -= 0.01" class="btn btn-light" type="button">-</button>
+                <button @click="set.ro=chNum(set.ro,0.01)"  class="btn btn-light" type="button">+</button>
+                <button @click="set.ro=chNum(set.ro,-0.01)" class="btn btn-light" type="button">-</button>
             </div>
         </div>
 
@@ -42,8 +42,8 @@
             </div>
             <input v-model.lazy="set.ifr" type="text" id="ifr" class="form-control form-control-light form-control-sm text-right" aria-describedby="title-help">
                         <div class="input-group-append" id="button-addon4">
-                <button @click="set.ifr += 1" class="btn btn-light" type="button">+</button>
-                <button @click="set.ifr -= 1" class="btn btn-light" type="button">-</button>
+                <button @click="set.ifr=chNum(set.ifr,1)"  class="btn btn-light" type="button">+</button>
+                <button @click="set.ifr=chNum(set.ifr,-1)" class="btn btn-light" type="button">-</button>
             </div>
         </div>
 
@@ -62,15 +62,11 @@
 <script>
 export default {
     props: ['set'],
-    methode: {
-        RoundCorrect(num, precision = 2) {
-	        // half epsilon to correct edge cases.
-	        var c = 0.5 * Number.EPSILON * num;
-            //	var p = Math.pow(10, precision); //slow
-	        var p = 1; while (precision--> 0) p *= 10;
-	        if (num < 0)
-		    p *= -1;
-	        return Math.round((num + c) * p) / p;
+    methods: {
+        chNum(num,x = 0) {
+            num += x;
+            //if (num < 0) { num = 0; }
+            return (Math.round(num*100)/100);
         }
     }   
 }

@@ -15,6 +15,15 @@
       </div>
       <div class="row m-10" @click="refresh()">
           <div class="col-lg-12 my-1 p-3 bg-light">
+              <div class="dropdown">
+                <button class="btn btn-secondary btn-sm" @click="chartDraw" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  &#65291;
+                </button>
+                <div class="dropdown-menu shadow-sm" aria-labelledby="dropdownMenuButton">
+                  <a v-if="!n.visible" v-for="n in npis" class="dropdown-item" @click="n.visible = !n.visible" href="#" :key="">{{n.name}} (-{{n.ror}})</a>
+                </div>
+                <span class="ml-3 text-dark">Add <b>non-pharmacological interventions (NPIs)</b> and set the day on which the measure begins and ends (double click to reset):</span>
+              </div>
               <comp-npi 
                   v-if="n.visible" 
                   v-for="n in npis" 
@@ -22,19 +31,11 @@
                   :set="n" 
                   :key="">
               </comp-npi>
-              <div class="dropdown">
-                <button class="btn btn-secondary btn-sm" @click="chartDraw" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  &#65291;
-                </button>
-                <div class="dropdown-menu shadow-sm" aria-labelledby="dropdownMenuButton">
-                  <a v-if="!n.visible" v-for="n in npis" class="dropdown-item" @click="n.visible = !n.visible" href="#" :key="">{{n.name}}</a>
-                </div>
-              </div>
           </div>
       </div>
-      <aside class="row my-1 p-3 bg-light">
-          <cov-api>Covid-19 live info: {{ node }} <button class="btn btn-secondary" @click="nodeFetch('-M7bKktgGABUessajBWO')">FETCH</button></cov-api>
-      </aside>
+      <!-- <aside class="row my-1 p-3 bg-light">
+          <cov-api>Covid-19 live info:</cov-api>
+      </aside> -->
     </main>    
 </template>
 
@@ -56,25 +57,26 @@ export default {
   data () {     
     return {
         set: {                // default settings
-            title:      '',     // sim title 
-            days:       30,     // days of symulation
-            dayZero:    10,     // case count at day zero
-            ro:         0.2,    // pathogen reproduction number
-            incubation: 1,      // avrage incubation period in days
-            hospit:     1,      // avrage hospitalisation period
-            ifr:        10,     // avrage infaction fatality rate
-            linlog:     0       // y-axis 0-linear 1-log
+            title:      '',   // sim title 
+            days:       30,   // days of symulation
+            dayZero:    10,   // case count at day zero
+            ro:         0.5, // pathogen reproduction number
+            incubation: 1,    // avrage incubation period in days
+            hospit:     1,    // avrage hospitalisation period
+            ifr:        10,   // avrage infaction fatality rate
+            linlog:     0     // y-axis 0-linear 1-log
         },
-        npis: [               // list of NPIs
-            { name: 'aaa', visible: 1, ror: 0.02, val: { id: 0, active: 1, steps: 30, valA:  7, valB: 30, min: 0,max: 0  } },
-            { name: 'bbb', visible: 1, ror: 0.05, val: { id: 1, active: 1, steps: 30, valA: 14, valB: 30, min: 0,max: 0  } },
-            { name: 'ccc', visible: 1, ror: 0.07, val: { id: 2, active: 1, steps: 30, valA: 21, valB: 30, min: 0,max: 0  } },
-            { name: 'ddd', visible: 0, ror: 0.15, val: { id: 3, active: 1, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
-            { name: 'eee', visible: 0, ror: 0.10, val: { id: 4, active: 1, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
-            { name: 'fff', visible: 0, ror: 0.80, val: { id: 5, active: 1, steps: 30, valA:  5, valB: 18, min: 0,max: 0  } },
-            { name: 'ggg', visible: 0, ror: 0.60, val: { id: 6, active: 1, steps: 30, valA: 15, valB: 20, min: 0,max: 0  } },
-            { name: 'hhh', visible: 0, ror: 0.20, val: { id: 7, active: 1, steps: 30, valA:  1, valB: 12, min: 0,max: 0  } }
-            ],
+        npis: [   // list of NPIs - default values
+            { name: 'media information',    visible: 1, ror: 0.05, val: { id: 0, active: 1, steps: 30, valA:  7, valB: 30, min: 0,max: 0  } },
+            { name: 'handwashing',          visible: 1, ror: 0.10, val: { id: 1, active: 1, steps: 30, valA: 14, valB: 30, min: 0,max: 0  } },
+            { name: 'facemasks',            visible: 1, ror: 0.20, val: { id: 2, active: 0, steps: 30, valA: 21, valB: 30, min: 0,max: 0  } },
+            { name: 'taking temperature',   visible: 0, ror: 0.20, val: { id: 3, active: 1, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
+            { name: 'social distancing',    visible: 0, ror: 0.40, val: { id: 4, active: 1, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
+            { name: 'quarantining cases',   visible: 0, ror: 0.60, val: { id: 5, active: 1, steps: 30, valA:  5, valB: 18, min: 0,max: 0  } },
+            { name: 'stay at home',         visible: 0, ror: 0.80, val: { id: 6, active: 1, steps: 30, valA:  5, valB: 18, min: 0,max: 0  } },
+            { name: 'soft lockdown',        visible: 0, ror: 1.00, val: { id: 7, active: 1, steps: 30, valA: 15, valB: 20, min: 0,max: 0  } },
+            { name: 'hard lockdown',        visible: 0, ror: 1.50, val: { id: 8, active: 1, steps: 30, valA:  1, valB: 12, min: 0,max: 0  } }
+            ],  
         chartdata: {
             labels: [1,2,3],
             datasets: [{ 
@@ -85,7 +87,7 @@ export default {
                 fill: 1
             }, { 
                 data: [1,2,3],
-                label: "Deaths",
+                label: "Fatalities",
                 borderColor: "#4a9179",
                 backgroundColor: "#4a9179a0",
                 fill: "origin"
@@ -112,7 +114,7 @@ export default {
                   fill: 1
               }, { 
                   data: [],     // clear array
-                  label: "Deaths",
+                  label: "Fatalities",
                   borderColor: "#4a9179",
                   backgroundColor: "#4a9179a0",
                   borderWidth: 1,
@@ -158,8 +160,6 @@ export default {
             this.chartdata.datasets[1].data.push(Math.round(this.chartdata.datasets[0].data[i-1] * this.set.ifr / 100 ));
           }          
         }
-        //console.log('DAY: '+ this.chartdata.labels);
-        //console.log('CH1: '+ this.chartdata.datasets[0].data);
     },
     refresh() {
         if (this.npis[0].val.steps !== this.set.days) {
@@ -175,7 +175,6 @@ export default {
               }
           }
         }
-        //console.log('NPI CLICK!');
         eventBus.$emit('set-link', '');
         this.chartDraw();
     },
@@ -187,20 +186,16 @@ export default {
                       if(response.status === 200) {   // status 'ok'
                         eventBus.$emit('set-link', 'http://localhost:8080/#/sim/'+response.body.name);
                       } else {
-                        //this.shareLink = 'error: '+response.statusText;
                         eventBus.$emit('set-link', 'error: '+response.statusText);
                       }
                   }, error => {
                       console.tag('[ERR: no database connection]');
                 });  
-        //console.log('DATA: '+data);
-        //console.log('OBJ: '+this.obj);
     },
     nodeFetch(key) {
         // Fire Base Realtime Database connection
         this.$http.get('https://covsim-7ce15.firebaseio.com/csnode/'+key+'.json')
                 .then(response => { 
-                      // console.log(response);
                       return response.json();
                   }, error => {
                       console.tag('[ERR: no database connection]');
@@ -225,13 +220,8 @@ export default {
   },
   created() {
     eventBus.$on('node-submit', () => {
-        console.log('[EB: node submit -> sim.vue');
         this.nodeSubmit();
     } );
-  },
-  destroyed() {
-    console.log('[sim destroyed]');
-    //eventBus.$emit('set-link', 'hide');
   },
   watch: {
     'set.days': function() {

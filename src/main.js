@@ -10,15 +10,15 @@ Vue.use(VueResource);
 Vue.use(VueRouter);
 
 const router = new VueRouter({
-   routes: routes,      // ES6 ->     routes
-   //mode: 'history'      // mode: 'history'
+   routes: routes,     
+   mode: 'hash'      // alternative mode: 'history'
 });
 
 export const eventBus = new Vue();
 
 new Vue({
   el: '#app',
-  router: router,     // ES5 ->     router
+  router: router,   
   render: h => h(App)
 })
 
