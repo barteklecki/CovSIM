@@ -33,7 +33,7 @@
           </div>
       </div>
       <aside class="row my-1 p-3 bg-light">
-          <cov-api>Covid-19 live info:</cov-api>
+          <cov-api>Covid-19 live info: {{ node }} <button class="btn btn-secondary" @click="nodeFetch('-M7bKktgGABUessajBWO')">FETCH</button></cov-api>
       </aside>
     </main>    
 </template>
@@ -46,6 +46,7 @@ import Settings from './Settings.vue';
 import { eventBus } from '../main.js';
 
 export default {
+  props: ['node'],
   components: {
     'app-chart': Chart,
     'app-settings': Settings,
@@ -54,27 +55,27 @@ export default {
   },  
   data () {     
     return {
-      set: {                // default settings
-        title:      '',     // sim title 
-        days:       30,     // days of symulation
-        dayZero:    10,     // case count at day zero
-        ro:         0.2,    // pathogen reproduction number
-        incubation: 1,      // avrage incubation period in days
-        hospit:     1,      // avrage hospitalisation period
-        ifr:        10,     // avrage infaction fatality rate
-        linlog:     0       // y-axis 0-linear 1-log
-      },
-      npis: [               // list of NPIs
-        { name: 'aaa', visible: 1, ror: 0.02, val: { id: 0, active: 1, steps: 30, valA:  7, valB: 30, min: 0,max: 0  } },
-        { name: 'bbb', visible: 1, ror: 0.05, val: { id: 1, active: 1, steps: 30, valA: 14, valB: 30, min: 0,max: 0  } },
-        { name: 'ccc', visible: 1, ror: 0.07, val: { id: 2, active: 1, steps: 30, valA: 21, valB: 30, min: 0,max: 0  } },
-        { name: 'ddd', visible: 0, ror: 0.15, val: { id: 3, active: 1, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
-        { name: 'eee', visible: 0, ror: 0.10, val: { id: 4, active: 1, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
-        { name: 'fff', visible: 0, ror: 0.80, val: { id: 5, active: 1, steps: 30, valA:  5, valB: 18, min: 0,max: 0  } },
-        { name: 'ggg', visible: 0, ror: 0.60, val: { id: 6, active: 1, steps: 30, valA: 15, valB: 20, min: 0,max: 0  } },
-        { name: 'hhh', visible: 0, ror: 0.20, val: { id: 7, active: 1, steps: 30, valA:  1, valB: 12, min: 0,max: 0  } }
+        set: {                // default settings
+            title:      '',     // sim title 
+            days:       30,     // days of symulation
+            dayZero:    10,     // case count at day zero
+            ro:         0.2,    // pathogen reproduction number
+            incubation: 1,      // avrage incubation period in days
+            hospit:     1,      // avrage hospitalisation period
+            ifr:        10,     // avrage infaction fatality rate
+            linlog:     0       // y-axis 0-linear 1-log
+        },
+        npis: [               // list of NPIs
+            { name: 'aaa', visible: 1, ror: 0.02, val: { id: 0, active: 1, steps: 30, valA:  7, valB: 30, min: 0,max: 0  } },
+            { name: 'bbb', visible: 1, ror: 0.05, val: { id: 1, active: 1, steps: 30, valA: 14, valB: 30, min: 0,max: 0  } },
+            { name: 'ccc', visible: 1, ror: 0.07, val: { id: 2, active: 1, steps: 30, valA: 21, valB: 30, min: 0,max: 0  } },
+            { name: 'ddd', visible: 0, ror: 0.15, val: { id: 3, active: 1, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
+            { name: 'eee', visible: 0, ror: 0.10, val: { id: 4, active: 1, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
+            { name: 'fff', visible: 0, ror: 0.80, val: { id: 5, active: 1, steps: 30, valA:  5, valB: 18, min: 0,max: 0  } },
+            { name: 'ggg', visible: 0, ror: 0.60, val: { id: 6, active: 1, steps: 30, valA: 15, valB: 20, min: 0,max: 0  } },
+            { name: 'hhh', visible: 0, ror: 0.20, val: { id: 7, active: 1, steps: 30, valA:  1, valB: 12, min: 0,max: 0  } }
             ],
-      chartdata: {
+        chartdata: {
             labels: [1,2,3],
             datasets: [{ 
                 data: [1,6,9],
@@ -89,12 +90,12 @@ export default {
                 backgroundColor: "#4a9179a0",
                 fill: "origin"
             }]
-      },
-      options: {
+        },
+        options: {
             responsive: true,
             maintainAspectRatio: false,
             aspectRatio: false,
-      }
+        }
     }
   },
   methods: {
@@ -184,8 +185,7 @@ export default {
                 .then(response => { 
                       console.log(response);
                       if(response.status === 200) {   // status 'ok'
-                        //this.shareLink = window.location.href+'node='+response.body.name;
-                        eventBus.$emit('set-link', window.location.href+'node='+response.body.name);
+                        eventBus.$emit('set-link', 'http://localhost:8080/#/sim/'+response.body.name);
                       } else {
                         //this.shareLink = 'error: '+response.statusText;
                         eventBus.$emit('set-link', 'error: '+response.statusText);
@@ -218,13 +218,20 @@ export default {
   },
   mounted () {
     this.chartDraw();
+    if(this.node) {
+        eventBus.$emit('set-link', '');
+        this.nodeFetch(this.node);  
+    }
   },
   created() {
     eventBus.$on('node-submit', () => {
         console.log('[EB: node submit -> sim.vue');
         this.nodeSubmit();
-
     } );
+  },
+  destroyed() {
+    console.log('[sim destroyed]');
+    //eventBus.$emit('set-link', 'hide');
   },
   watch: {
     'set.days': function() {

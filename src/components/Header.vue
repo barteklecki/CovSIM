@@ -9,15 +9,15 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Sim<span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Tutorial</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">About</a>
-          </li>
+            <router-link to="/" tag="li" class="nav-item" active-class="active" exact>
+                <a class="nav-link">Sim</a>
+            </router-link>
+            <router-link to="/tutorial" tag="li" class="nav-item" active-class="active" exact>
+                <a class="nav-link">Tutorial</a>
+            </router-link>
+            <router-link to="/about" tag="li" class="nav-item" active-class="active" exact>
+                <a class="nav-link">About</a>
+            </router-link>
         </ul>
       </div>
       <!-- SHARE -->

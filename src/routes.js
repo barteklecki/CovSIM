@@ -1,10 +1,10 @@
-import App from './components/App.vue';
 import Sim from './components/Sim.vue';
 import Tutorial from './components/Tutorial.vue';
+import About from './components/About.vue';
 
 export const routes = [
-    { path: '', component: App },
-    { path: '/sim', component: App },
+    { path: '/', component: Sim },
+    { path: '/sim/:node', component: Sim, props: true, },
     { path: '/tutorial', component: Tutorial },
     { path: '/about', component: About },
 ];

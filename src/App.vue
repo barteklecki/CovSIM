@@ -3,7 +3,8 @@
     <!-- HEADER NAV -->
     <app-header></app-header>
     <!-- CONTENT -->
-    <app-sim></app-sim>
+    <router-view></router-view>
+    <!-- <app-sim></app-sim> -->
     <!-- FOOTER -->
     <footer class="page-footer font-small indigo">
       <div class="footer-copyright text-center py-3 text-light">Copyright 2020</div> 
