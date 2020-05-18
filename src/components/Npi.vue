@@ -4,7 +4,7 @@
         <div class="col col-lg-4 pr-0 justify-content-end" style="border-weight: 1px, boredr-style: solid, border-color: black">
             <div class="btn-group d-flex" role="group">
                 <button class="btn btn-outline-secondary btn-sm" @click="set.visible = !set.visible">&#10060;</button>
-                <button class="btn btn-outline-secondary btn-sm w-100 text-left">
+                <button class="btn btn-outline-secondary btn-sm w-100 text-left text-truncate">
                     {{ set.name }}
                 </button>
                 <button class="btn btn-outline-secondary btn-sm text-left w-100 min-w-10">

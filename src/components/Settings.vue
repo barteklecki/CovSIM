@@ -63,9 +63,10 @@
 export default {
     props: ['set'],
     methods: {
-        chNum(num,x = 0) {
+        chNum(num,x) {
+            num = Number(num);
             num += x;
-            //if (num < 0) { num = 0; }
+            if (num < 0 || num === NaN) { num = 0; }
             return (Math.round(num*100)/100);
         }
     }   

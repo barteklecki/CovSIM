@@ -21,7 +21,7 @@
         </ul>
       </div>
       <!-- SHARE -->
-      <form class="form-inline">
+      <form v-if="shareCheck()" class="form-inline">
         <div v-if="shareLink" class="form-group">
           <input type="text" :value="shareLink" readonly class="form-control form-control-sm mr-2" id="link">
         </div>
@@ -45,6 +45,13 @@ export default {
         nodeSubmit() {
             this.shareLink = "generating link...";
             eventBus.$emit('node-submit');
+        },
+        shareCheck() {
+            if (this.shareLink === 'hide') {
+                return false;
+            } else {
+                return true;
+            }
         }
     },
     created() {

@@ -5,28 +5,38 @@
             <app-settings :set="set"></app-settings>
           </div>
           <div class="chart-container col-lg-9 my-1 p-3 bg-light text-right">
-            <app-chart class="float-right"
+            <app-chart id="chart" class="float-right"
                 :chart-data="chartdata" 
-                :options="options" 
-                style="width: 90%"
-                :height="400">
+                :options="options">
             </app-chart>
           </div>
       </div>
-      <div class="row m-10" @click="refresh()">
+      <div @click="refresh()" class="row m-10">
           <div class="col-lg-12 my-1 p-3 bg-light">
               <div class="dropdown">
-                <button class="btn btn-secondary btn-sm" @click="chartDraw" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button @click="chartDraw" 
+                        class="btn btn-secondary btn-sm" 
+                        type="button" id="dropdownMenuButton" 
+                        data-toggle="dropdown" 
+                        aria-haspopup="true" 
+                        aria-expanded="false">
                   &#65291;
                 </button>
                 <div class="dropdown-menu shadow-sm" aria-labelledby="dropdownMenuButton">
-                  <a v-if="!n.visible" v-for="n in npis" class="dropdown-item" @click="n.visible = !n.visible" href="#" :key="">{{n.name}} (-{{n.ror}})</a>
+                    <a  v-for="n in notVisibleNpis" 
+                        @click="n.visible = !n.visible" 
+                        class="dropdown-item" 
+                        :key="">
+                            {{n.name}} (Ro-{{n.ror}})
+                    </a>
                 </div>
-                <span class="ml-3 text-dark">Add <b>non-pharmacological interventions (NPIs)</b> and set the day on which the measure begins and ends (double click to reset):</span>
+                <span class="ml-3 text-dark font-weight-light">
+                    Add <span class="font-weight-bold">non-pharmacological interventions (NPIs)</span> 
+                    and set the day on which the measure begins and ends (double click to reset):
+                    </span>
               </div>
               <comp-npi 
-                  v-if="n.visible" 
-                  v-for="n in npis" 
+                  v-for="n in visibleNpis" 
                   :val="n.val" 
                   :set="n" 
                   :key="">
@@ -66,16 +76,16 @@ export default {
             ifr:        10,   // avrage infaction fatality rate
             linlog:     0     // y-axis 0-linear 1-log
         },
-        npis: [   // list of NPIs - default values
+        npis: [               // list of NPIs - default values
             { name: 'media information',    visible: 1, ror: 0.05, val: { id: 0, active: 1, steps: 30, valA:  7, valB: 30, min: 0,max: 0  } },
             { name: 'handwashing',          visible: 1, ror: 0.10, val: { id: 1, active: 1, steps: 30, valA: 14, valB: 30, min: 0,max: 0  } },
             { name: 'facemasks',            visible: 1, ror: 0.20, val: { id: 2, active: 0, steps: 30, valA: 21, valB: 30, min: 0,max: 0  } },
-            { name: 'taking temperature',   visible: 0, ror: 0.20, val: { id: 3, active: 1, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
-            { name: 'social distancing',    visible: 0, ror: 0.40, val: { id: 4, active: 1, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
-            { name: 'quarantining cases',   visible: 0, ror: 0.60, val: { id: 5, active: 1, steps: 30, valA:  5, valB: 18, min: 0,max: 0  } },
-            { name: 'stay at home',         visible: 0, ror: 0.80, val: { id: 6, active: 1, steps: 30, valA:  5, valB: 18, min: 0,max: 0  } },
-            { name: 'soft lockdown',        visible: 0, ror: 1.00, val: { id: 7, active: 1, steps: 30, valA: 15, valB: 20, min: 0,max: 0  } },
-            { name: 'hard lockdown',        visible: 0, ror: 1.50, val: { id: 8, active: 1, steps: 30, valA:  1, valB: 12, min: 0,max: 0  } }
+            { name: 'taking temperature',   visible: 0, ror: 0.20, val: { id: 3, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } },
+            { name: 'social distancing',    visible: 0, ror: 0.40, val: { id: 4, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } },
+            { name: 'quarantining cases',   visible: 0, ror: 0.60, val: { id: 5, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } },
+            { name: 'stay at home',         visible: 0, ror: 0.80, val: { id: 6, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } },
+            { name: 'soft lockdown',        visible: 0, ror: 1.00, val: { id: 7, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } },
+            { name: 'hard lockdown',        visible: 0, ror: 1.50, val: { id: 8, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } }
             ],  
         chartdata: {
             labels: [1,2,3],
@@ -128,7 +138,7 @@ export default {
         d = Math.round(d);
         if (d < 10)                 { d = 10; }
         if (d > 365)                { d = 365; }
-        if (d == NaN && d == null)  { d = 30; }
+        if (isNaN(d) || d == null)  { d = 30; }
         // day zero init
         this.chartdata.labels.push(1);
         this.chartdata.datasets[0].data.push(this.set.dayZero);
@@ -211,6 +221,26 @@ export default {
         this.refresh();
     }
   },
+  computed: {
+        visibleNpis() {
+                let n=[];
+                for(let i = 0; i < this.npis.length; i++) {
+                    if(this.npis[i].visible) {
+                        n.push(this.npis[i]);
+                    }
+                }
+                return n;
+        },
+        notVisibleNpis() {
+                let n=[];
+                for(let i = 0; i < this.npis.length; i++) {
+                    if(!this.npis[i].visible) {
+                        n.push(this.npis[i]);
+                    }
+                }
+                return n;
+        }
+  },
   mounted () {
     this.chartDraw();
     if(this.node) {
@@ -222,6 +252,10 @@ export default {
     eventBus.$on('node-submit', () => {
         this.nodeSubmit();
     } );
+    eventBus.$emit('set-link', 'C');
+  },
+  destroyed() {
+    eventBus.$emit('set-link', 'hide');
   },
   watch: {
     'set.days': function() {
@@ -239,3 +273,10 @@ export default {
 
 }
 </script>
+
+<style scoped>
+    #chart {
+        width: 90%;
+        height: 400px;
+    }
+</style>
