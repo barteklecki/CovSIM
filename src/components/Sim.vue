@@ -32,7 +32,7 @@
                 </div>
                 <span class="ml-3 text-dark font-weight-light">
                     Add <span class="font-weight-bold">non-pharmacological interventions (NPIs)</span> 
-                    and set the day on which the measure begins and ends (double click to reset):
+                    and set the day on which the measure begins and ends (double click to reset range):
                     </span>
               </div>
               <comp-npi 
@@ -70,7 +70,7 @@ export default {
             title:      '',   // sim title 
             days:       30,   // days of symulation
             dayZero:    10,   // case count at day zero
-            ro:         0.5, // pathogen reproduction number
+            ro:         0.5,  // pathogen reproduction number
             incubation: 1,    // avrage incubation period in days
             hospit:     1,    // avrage hospitalisation period
             ifr:        10,   // avrage infaction fatality rate
@@ -87,7 +87,7 @@ export default {
             { name: 'soft lockdown',        visible: 0, ror: 1.00, val: { id: 7, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } },
             { name: 'hard lockdown',        visible: 0, ror: 1.50, val: { id: 8, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } }
             ],  
-        chartdata: {
+        chartdata: {           // placeholder chart data
             labels: [1,2,3],
             datasets: [{ 
                 data: [1,6,9],
@@ -111,7 +111,7 @@ export default {
     }
   },
   methods: {
-    chartDraw() {
+    chartDraw() {  // prepering vue-chartJS component to redraw
         this.chartdata = {
               labels: [],       // clear array
               datasets: [{ 
@@ -134,7 +134,7 @@ export default {
           };
           this.curveCalc(this.set.days);
     },
-    curveCalc(d){
+    curveCalc(d){   // calculating new datasets for chart object 
         d = Math.round(d);
         if (d < 10)                 { d = 10; }
         if (d > 365)                { d = 365; }
@@ -171,7 +171,7 @@ export default {
           }          
         }
     },
-    refresh() {
+    refresh() {     // adjast multislider ranges in npi components
         if (this.npis[0].val.steps !== this.set.days) {
           for (let i = 0; i < this.npis.length; i++) {
             if(this.npis[i].val.valB=this.npis[i].val.steps)
@@ -185,16 +185,15 @@ export default {
               }
           }
         }
-        eventBus.$emit('set-link', '');
-        this.chartDraw();
+        eventBus.$emit('set-link', '');  // hide an outdated share link
+        this.chartDraw();                  
     },
-    nodeSubmit() {
-        // Fire Base Realtime Database connection
+    nodeSubmit() {  // save snapshot - Fire Base Realtime Database connection
         this.$http.post('https://covsim-7ce15.firebaseio.com/csnode.json', { set: this.set, npis: this.npis} )
                 .then(response => { 
                       console.log(response);
-                      if(response.status === 200) {   // status 'ok'
-                        eventBus.$emit('set-link', 'http://localhost:8080/#/sim/'+response.body.name);
+                      if(response.status === 200) {   // status 'ok', set share link string
+                        eventBus.$emit('set-link', window.location.href.split('sim/')[0]+'sim/'+response.body.name);
                       } else {
                         eventBus.$emit('set-link', 'error: '+response.statusText);
                       }
@@ -202,8 +201,7 @@ export default {
                       console.tag('[ERR: no database connection]');
                 });  
     },
-    nodeFetch(key) {
-        // Fire Base Realtime Database connection
+    nodeFetch(key) {  // load snapshot - Fire Base Realtime Database connection
         this.$http.get('https://covsim-7ce15.firebaseio.com/csnode/'+key+'.json')
                 .then(response => { 
                       return response.json();
@@ -215,14 +213,14 @@ export default {
                       this.setByNode(data);
                 });
     },
-    setByNode(node) {
+    setByNode(node) {   // spliting fatched obj to local settings and ranges
         this.set = node.set;
         this.npis = node.npis;
         this.refresh();
     }
   },
-  computed: {
-        visibleNpis() {
+  computed: {  
+        visibleNpis() {     // computed property for npis array
                 let n=[];
                 for(let i = 0; i < this.npis.length; i++) {
                     if(this.npis[i].visible) {
@@ -231,7 +229,7 @@ export default {
                 }
                 return n;
         },
-        notVisibleNpis() {
+        notVisibleNpis() {  // computed property for npis array
                 let n=[];
                 for(let i = 0; i < this.npis.length; i++) {
                     if(!this.npis[i].visible) {
@@ -242,28 +240,27 @@ export default {
         }
   },
   mounted () {
-    this.chartDraw();
-    if(this.node) {
+    this.chartDraw();                       // chart draw on page load
+    if(this.node) {                         // hiding share link after fatching data
         eventBus.$emit('set-link', '');
         this.nodeFetch(this.node);  
     }
   },
-  created() {
-    eventBus.$on('node-submit', () => {
+  created() {                   
+    eventBus.$on('node-submit', () => {     // event watcher for 'SHARE' button
         this.nodeSubmit();
     } );
-    eventBus.$emit('set-link', 'C');
+    eventBus.$emit('set-link', '');         // showing share button when in sim
   },
   destroyed() {
-    eventBus.$emit('set-link', 'hide');
+    eventBus.$emit('set-link', 'hide');     // hiding share button when outside of sim
   },
   watch: {
-    'set.days': function() {
+    'set.days': function() {                
       this.refresh();
-      //console.log('WATCH: set.days changed');
     },
     set: {
-      handler(val){
+      handler(val){                         // refreshing gui and chart after data change
         this.refresh();
         //console.log('WATCH: SET changed');
       },

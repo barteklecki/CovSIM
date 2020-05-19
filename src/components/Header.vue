@@ -26,7 +26,6 @@
           <input type="text" :value="shareLink" readonly class="form-control form-control-sm mr-2" id="link">
         </div>
         <button :disabled="shareLink ? true : false" @click="nodeSubmit" class="btn btn-outline-dark btn-sm mr-5">SHARE</button>
-        <!-- <button @click="eventBus.$emit('node-fetch')"  class="btn btn-outline-dark btn-sm mr-5">FETCH</button> -->
       </form>
     </nav>    
 </template>
@@ -35,10 +34,9 @@
 import { eventBus } from '../main.js';
 
 export default {
-    //props: ['shareLink'],
     data() {
         return {
-            shareLink: ''   // 0 = hiden
+            shareLink: ''   // 0 = textbox hiden
         }
     },
     methods: {
@@ -46,7 +44,7 @@ export default {
             this.shareLink = "generating link...";
             eventBus.$emit('node-submit');
         },
-        shareCheck() {
+        shareCheck() {      // checking if share panel should be visible
             if (this.shareLink === 'hide') {
                 return false;
             } else {

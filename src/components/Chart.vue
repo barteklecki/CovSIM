@@ -10,17 +10,14 @@ export default {
     props: ['options'], 
     mounted () {
         this.renderChart(this.chartData, this.options)
-    },
-    updated () {
-        console.log('⚡ I am updated');
-    },
-    methods: {
-        update(newData) {
-            console.log('updating', newData)
-            this.chartData.datasets.push(newData)
-            this._chart.update()      
-        }
     }
+    // methods: {
+    //     update(newData) {
+    //         console.log('updating', newData)
+    //         this.chartData.datasets.push(newData)
+    //         this._chart.update()      
+    //     }
+    // }
 }
 </script>
 

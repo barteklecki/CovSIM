@@ -1,3 +1,4 @@
+<!-- obsolete component -->
 <template>
     <div @click="covGet">
         <slot></slot> {{ str }}
