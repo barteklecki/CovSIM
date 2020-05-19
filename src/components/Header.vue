@@ -62,6 +62,6 @@ export default {
 
 <style>
     #link {
-        width: 400px;
+        width: 450px;
     }
 </style>

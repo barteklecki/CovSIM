@@ -43,9 +43,6 @@
               </comp-npi>
           </div>
       </div>
-      <!-- <aside class="row my-1 p-3 bg-light">
-          <cov-api>Covid-19 live info:</cov-api>
-      </aside> -->
     </main>    
 </template>
 
