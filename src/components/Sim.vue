@@ -32,7 +32,7 @@
                 </div>
                 <span class="ml-3 text-dark font-weight-light">
                     Add <span class="font-weight-bold">non-pharmacological interventions (NPIs)</span> 
-                    and set the day on which the measure begins and ends (double click to reset):
+                    and set the day on which the measure begins and ends (double click to reset range):
                     </span>
               </div>
               <comp-npi 
@@ -43,9 +43,6 @@
               </comp-npi>
           </div>
       </div>
-      <!-- <aside class="row my-1 p-3 bg-light">
-          <cov-api>Covid-19 live info:</cov-api>
-      </aside> -->
     </main>    
 </template>
 
@@ -66,28 +63,28 @@ export default {
   },  
   data () {     
     return {
-        set: {                // default settings
+        set: {                // default app settings
             title:      '',   // sim title 
             days:       30,   // days of symulation
             dayZero:    10,   // case count at day zero
-            ro:         0.5, // pathogen reproduction number
+            ro:         0.5,  // pathogen reproduction number
             incubation: 1,    // avrage incubation period in days
-            hospit:     1,    // avrage hospitalisation period
+            hospit:     1,    // avrage hospitalisation period in days
             ifr:        10,   // avrage infaction fatality rate
             linlog:     0     // y-axis 0-linear 1-log
         },
-        npis: [               // list of NPIs - default values
+        npis: [               // app list of NPIs - default values
             { name: 'media information',    visible: 1, ror: 0.05, val: { id: 0, active: 1, steps: 30, valA:  7, valB: 30, min: 0,max: 0  } },
             { name: 'handwashing',          visible: 1, ror: 0.10, val: { id: 1, active: 1, steps: 30, valA: 14, valB: 30, min: 0,max: 0  } },
-            { name: 'facemasks',            visible: 1, ror: 0.20, val: { id: 2, active: 0, steps: 30, valA: 21, valB: 30, min: 0,max: 0  } },
-            { name: 'taking temperature',   visible: 0, ror: 0.20, val: { id: 3, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } },
-            { name: 'social distancing',    visible: 0, ror: 0.40, val: { id: 4, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } },
-            { name: 'quarantining cases',   visible: 0, ror: 0.60, val: { id: 5, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } },
-            { name: 'stay at home',         visible: 0, ror: 0.80, val: { id: 6, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } },
-            { name: 'soft lockdown',        visible: 0, ror: 1.00, val: { id: 7, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } },
-            { name: 'hard lockdown',        visible: 0, ror: 1.50, val: { id: 8, active: 1, steps: 30, valA:  0, valB:  0, min: 0,max: 0  } }
+            { name: 'facemasks',            visible: 1, ror: 0.20, val: { id: 2, active: 1, steps: 30, valA: 16, valB: 30, min: 0,max: 0  } },
+            { name: 'taking temperature',   visible: 1, ror: 0.20, val: { id: 3, active: 0, steps: 30, valA: 18, valB: 30, min: 0,max: 0  } },
+            { name: 'social distancing',    visible: 1, ror: 0.25, val: { id: 4, active: 0, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
+            { name: 'quarantining cases',   visible: 1, ror: 0.30, val: { id: 5, active: 0, steps: 30, valA: 22, valB: 30, min: 0,max: 0  } },
+            { name: 'stay at home',         visible: 1, ror: 0.40, val: { id: 6, active: 0, steps: 30, valA: 24, valB: 30, min: 0,max: 0  } },
+            { name: 'soft lockdown',        visible: 1, ror: 0.80, val: { id: 7, active: 0, steps: 30, valA: 26, valB: 30, min: 0,max: 0  } },
+            { name: 'hard lockdown',        visible: 0, ror: 0.95, val: { id: 8, active: 0, steps: 30, valA: 28, valB: 30, min: 0,max: 0  } }
             ],  
-        chartdata: {
+        chartdata: { 
             labels: [1,2,3],
             datasets: [{ 
                 data: [1,6,9],
@@ -103,7 +100,7 @@ export default {
                 fill: "origin"
             }]
         },
-        options: {
+        options: {  // ChartJS
             responsive: true,
             maintainAspectRatio: false,
             aspectRatio: false,
@@ -111,11 +108,11 @@ export default {
     }
   },
   methods: {
-    chartDraw() {
+    chartDraw() {  
         this.chartdata = {
-              labels: [],       // clear array
+              labels: [],     
               datasets: [{ 
-                  data: [],     // clear array
+                  data: [],    
                   label: "Confirmed",
                   borderColor: "#7fffd4",
                   backgroundColor: "#cdffeea0", 
@@ -123,7 +120,7 @@ export default {
                   pointRadius: 2,
                   fill: 1
               }, { 
-                  data: [],     // clear array
+                  data: [],   
                   label: "Fatalities",
                   borderColor: "#4a9179",
                   backgroundColor: "#4a9179a0",
@@ -134,28 +131,26 @@ export default {
           };
           this.curveCalc(this.set.days);
     },
-    curveCalc(d){
-        d = Math.round(d);
-        if (d < 10)                 { d = 10; }
-        if (d > 365)                { d = 365; }
-        if (isNaN(d) || d == null)  { d = 30; }
-        // day zero init
+    curveCalc(days){  
+        days = Math.round(days);
+        if (days < 10) { days = 10; }
+        if (days > 365) { days = 365; }
+        if (isNaN(days) || days == null)  { days = 30; }
+        
         this.chartdata.labels.push(1);
         this.chartdata.datasets[0].data.push(this.set.dayZero);
         this.chartdata.datasets[1].data.push(0);
-
         let rro = 0;
         let n = 0;
 
-        for (let i = 1; i < d; i++) {   
-          this.chartdata.labels.push(i+1);      // chart x-axis add day
+        for (let i = 1; i < days; i++) {   
+          this.chartdata.labels.push(i+1);      
           rro = 0;
           n = 0;
-          // confirmed cases
+          
           for (let j = 0; j < this.npis.length; j++) {
             if (this.npis[j].visible && this.npis[j].val.active && i > this.npis[j].val.valA && i < this.npis[j].val.valB)                      {
               rro += this.npis[j].ror;
-              //console.log('V'+this.npis[j].visible+' A'+this.npis[j].val.active+' ROR'+this.npis[j].ror);
             }
           }
           
@@ -164,6 +159,7 @@ export default {
           } else {
             this.chartdata.datasets[0].data.push(Math.round(((this.set.ro - rro) * this.chartdata.datasets[0].data[i-1])+1+this.chartdata.datasets[0].data[i-1]));
           }
+
           if (i - this.set.hospit < 1) {
             this.chartdata.datasets[1].data.push(this.chartdata.datasets[1].data[i-1]);
           } else {
@@ -171,7 +167,7 @@ export default {
           }          
         }
     },
-    refresh() {
+    refresh() {    
         if (this.npis[0].val.steps !== this.set.days) {
           for (let i = 0; i < this.npis.length; i++) {
             if(this.npis[i].val.valB=this.npis[i].val.steps)
@@ -185,16 +181,15 @@ export default {
               }
           }
         }
-        eventBus.$emit('set-link', '');
-        this.chartDraw();
+        eventBus.$emit('set-link', '');  
+        this.chartDraw();                  
     },
-    nodeSubmit() {
-        // Fire Base Realtime Database connection
+    nodeSubmit() {  
         this.$http.post('https://covsim-7ce15.firebaseio.com/csnode.json', { set: this.set, npis: this.npis} )
                 .then(response => { 
                       console.log(response);
-                      if(response.status === 200) {   // status 'ok'
-                        eventBus.$emit('set-link', 'http://localhost:8080/#/sim/'+response.body.name);
+                      if(response.status === 200) { 
+                        eventBus.$emit('set-link', window.location.href.split('sim/')[0]+'sim/'+response.body.name);
                       } else {
                         eventBus.$emit('set-link', 'error: '+response.statusText);
                       }
@@ -202,8 +197,7 @@ export default {
                       console.tag('[ERR: no database connection]');
                 });  
     },
-    nodeFetch(key) {
-        // Fire Base Realtime Database connection
+    nodeFetch(key) {  
         this.$http.get('https://covsim-7ce15.firebaseio.com/csnode/'+key+'.json')
                 .then(response => { 
                       return response.json();
@@ -215,14 +209,14 @@ export default {
                       this.setByNode(data);
                 });
     },
-    setByNode(node) {
+    setByNode(node) { 
         this.set = node.set;
         this.npis = node.npis;
         this.refresh();
     }
   },
-  computed: {
-        visibleNpis() {
+  computed: {  
+        visibleNpis() {  
                 let n=[];
                 for(let i = 0; i < this.npis.length; i++) {
                     if(this.npis[i].visible) {
@@ -231,7 +225,7 @@ export default {
                 }
                 return n;
         },
-        notVisibleNpis() {
+        notVisibleNpis() {  
                 let n=[];
                 for(let i = 0; i < this.npis.length; i++) {
                     if(!this.npis[i].visible) {
@@ -242,30 +236,28 @@ export default {
         }
   },
   mounted () {
-    this.chartDraw();
-    if(this.node) {
+    this.chartDraw();                 
+    if(this.node) {              
         eventBus.$emit('set-link', '');
         this.nodeFetch(this.node);  
     }
   },
-  created() {
-    eventBus.$on('node-submit', () => {
+  created() {                   
+    eventBus.$on('node-submit', () => {    
         this.nodeSubmit();
     } );
-    eventBus.$emit('set-link', 'C');
+    eventBus.$emit('is-share-visible', true);       
   },
   destroyed() {
-    eventBus.$emit('set-link', 'hide');
+    eventBus.$emit('is-share-visible', false);   
   },
   watch: {
-    'set.days': function() {
+    'set.days': function() {                
       this.refresh();
-      //console.log('WATCH: set.days changed');
     },
     set: {
-      handler(val){
+      handler(val){                     
         this.refresh();
-        //console.log('WATCH: SET changed');
       },
       deep: true
     }

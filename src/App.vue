@@ -1,12 +1,13 @@
 <template>
   <div id="app">
-    <!-- HEADER NAV -->
     <app-header></app-header>
-    <!-- CONTENT -->
     <router-view></router-view>
-    <!-- FOOTER -->
     <footer class="page-footer font-small indigo">
-      <div class="footer-copyright text-center py-3 text-light">Copyright 2020 by BarLec</div> 
+      <div class="footer-copyright text-center py-3">
+        <a class="text-light" href="https://github.com/barteklecki/CovSIM">
+          Copyright 2020 by BarLec
+        </a>
+      </div> 
     </footer>
   </div>
 </template>
@@ -32,6 +33,4 @@ export default {
 body {
   background-color: aquamarine;
 }
-
-
 </style>

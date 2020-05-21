@@ -1,7 +1,13 @@
-<!--       [0                   A||||||||||||||┋||||||||||||||||B                   steps]             -->
 <template>
-    <div :id="'ms'+val.id" class="ms" @click="getClick($event)" @dblclick="resetBar()" :style="{background: grid}">
-        <div class="msBar" :class="{disactive: !val.active}" :style="[{'margin-left': relA + '%'},{width: relAB +'%'}]"><!--{{val.valA + ' ' + val.valB }}--></div>
+    <div class="ms" 
+        :id="'ms'+val.id" 
+        :style="{background: grid}"
+        @click="getClick($event)" 
+        @dblclick="resetBar()">
+            <div id="msBar"
+                :class="{disactive: !val.active}" 
+                :style="[{'margin-left': relA + '%'},{width: relAB +'%'}]">
+            </div>
     </div>
 </template>
 
@@ -26,51 +32,51 @@ export default {
         relAB:   0,             // bar lenght   relative in %
         grid:    ''             // placeholder for bg grid string
     }; },
-    mounted() {                 // init & data repationships
+    mounted() {             
         this.setBar(this.val.valA);
         this.getBGGrad;
     },
     computed: {
-        getBGGrad() {
+        getBGGrad() {      
             let i = (1 / this.val.steps) * 100;
             this.grid = 'repeating-linear-gradient(90deg, white, white '+i+'%, #f8f8f8 '+i+'%, #f8f8f8 '+(i*2)+'%)';
         }
     },
     methods: {
-        getClick(event) {
-            let el = document.getElementById('ms'+this.val.id);      
+        getClick(event) {   
+            let el = document.getElementById('ms'+this.val.id);   
             let length = el.clientWidth;
             let pos = event.pageX - el.getBoundingClientRect().left;
             let step = Math.round(pos / (length / this.val.steps));
-            if (this.val.min && step < this.val.min) { step = this.val.min; }  // range validation
+            if (this.val.min && step < this.val.min) { step = this.val.min; } 
             if (this.val.max && step > this.val.max) { step = this.val.max; }
             this.setBar(step);
             this.getBGGrad;
         },
-        setData() {          
-            this.relA  = this.val.valA  / this.val.steps * 100;
+        setData() { 
+            this.relA  = this.val.valA  / this.val.steps * 100;                 
             this.relAB = (this.val.valB-this.val.valA) / this.val.steps * 100;
         },
-        setBar(step) {                       //     [ 1       A|||||┋|||||B         2 ]
-            if (!this.val.active) { 
+        setBar(step) {
+            if (!this.val.active) {
                 console.log('[component deactivated]'); 
-            } else if (step > this.val.valA && this.val.valB == 0) {                // 0
+            } else if (step > this.val.valA && this.val.valB == 0) {    
                 this.val.valA  = step;                  
                 this.val.valB = this.val.steps;
             } else if (step < this.val.valA + ((this.val.valB-this.val.valA)/2)) {  // 1                                        
                 this.val.valA = step;
             } else if (step >= this.val.valA + ((this.val.valB-this.val.valA)/2)) { // 2                     
                 this.val.valB = step;                 
-            } else {
+            } else {       
                 console.log('[ms-idle-click]');
             }
-            this.relA  = this.val.valA  / this.val.steps * 100;
-            this.relAB = (this.val.valB-this.val.valA) / this.val.steps * 100;
-            if (!this.val.id) { this.val.id = Math.round(Math.random()*10000); } //generating unique id
-            // $emit here
+            this.setData();
+            if (!this.val.id) {
+                this.val.id = Math.round(Math.random()*10000); 
+            } 
             return;
         },
-        resetBar() {
+        resetBar() {    
             if (this.val.active) {
                 this.val.valA = 0;
                 this.val.valB = 0;
@@ -81,14 +87,11 @@ export default {
 
         }
     },
-    watch: { 
+    watch: {
         'val.steps':function() {
             this.getBGGrad;
-            //console.log('[STEPS CHANGED]');
-        }
-            
+        }     
     }
-
 }
 </script>
 
@@ -102,15 +105,14 @@ export default {
         width: 100%;
     }
 
-    .msBar {
+    #msBar {
         background-color: #7fffd4;
-        height: 100%;
+        min-height: 29px;  
         font-size: 8px;
-        min-height: 10px;
         cursor: col-resize;
     }
 
-    .disactive {
+    #msBar.disactive {
         background-color: #d3d3d39f;
         border-width: 1px;
         border-style: solid;
