@@ -1,17 +1,13 @@
-<!--     [0       A|||||||┋|||||||B         steps]  -->
 <template>
     <div class="ms" 
         :id="'ms'+val.id" 
         :style="{background: grid}"
         @click="getClick($event)" 
         @dblclick="resetBar()">
-
             <div id="msBar"
                 :class="{disactive: !val.active}" 
                 :style="[{'margin-left': relA + '%'},{width: relAB +'%'}]">
-                    <!--{{val.valA + ' ' + val.valB }}-->
             </div>
-
     </div>
 </template>
 
@@ -36,51 +32,51 @@ export default {
         relAB:   0,             // bar lenght   relative in %
         grid:    ''             // placeholder for bg grid string
     }; },
-    mounted() {                 // init & data repationships
+    mounted() {             
         this.setBar(this.val.valA);
         this.getBGGrad;
     },
     computed: {
-        getBGGrad() {       // calc slider background linier gradient grid
+        getBGGrad() {      
             let i = (1 / this.val.steps) * 100;
             this.grid = 'repeating-linear-gradient(90deg, white, white '+i+'%, #f8f8f8 '+i+'%, #f8f8f8 '+(i*2)+'%)';
         }
     },
     methods: {
-        getClick(event) {   // calc relative click place
-            let el = document.getElementById('ms'+this.val.id); // id must be unique for every component!   
+        getClick(event) {   
+            let el = document.getElementById('ms'+this.val.id);   
             let length = el.clientWidth;
             let pos = event.pageX - el.getBoundingClientRect().left;
             let step = Math.round(pos / (length / this.val.steps));
-            if (this.val.min && step < this.val.min) { step = this.val.min; }  // range validation
+            if (this.val.min && step < this.val.min) { step = this.val.min; } 
             if (this.val.max && step > this.val.max) { step = this.val.max; }
             this.setBar(step);
             this.getBGGrad;
         },
-        setData() {         // translating steps data into relative bar dimensions (%)
+        setData() { 
             this.relA  = this.val.valA  / this.val.steps * 100;                 
             this.relAB = (this.val.valB-this.val.valA) / this.val.steps * 100;
         },
-        setBar(step) {      // reacting on click relative position on bar
-            if (!this.val.active) { //     [ 1       A|||||┋|||||B         2 ]
+        setBar(step) {
+            if (!this.val.active) {
                 console.log('[component deactivated]'); 
-            } else if (step > this.val.valA && this.val.valB == 0) {                // 0
+            } else if (step > this.val.valA && this.val.valB == 0) {    
                 this.val.valA  = step;                  
                 this.val.valB = this.val.steps;
             } else if (step < this.val.valA + ((this.val.valB-this.val.valA)/2)) {  // 1                                        
                 this.val.valA = step;
             } else if (step >= this.val.valA + ((this.val.valB-this.val.valA)/2)) { // 2                     
                 this.val.valB = step;                 
-            } else {        // abnormal
+            } else {       
                 console.log('[ms-idle-click]');
             }
-            this.setData(); // steps -> %
-            if (!this.val.id) { //generating unique id if necessary
+            this.setData();
+            if (!this.val.id) {
                 this.val.id = Math.round(Math.random()*10000); 
             } 
             return;
         },
-        resetBar() {        // reset slider/bar do empty after dbclick
+        resetBar() {    
             if (this.val.active) {
                 this.val.valA = 0;
                 this.val.valB = 0;
@@ -91,13 +87,11 @@ export default {
 
         }
     },
-    watch: {                // rerender bg grid after days range change
+    watch: {
         'val.steps':function() {
             this.getBGGrad;
-        }
-            
+        }     
     }
-
 }
 </script>
 

@@ -18,7 +18,7 @@
                 Duration of simulation: <span  class="font-weight-bold">{{ set.days }} days</span>
             </label>
             <input  :step="15" id="rangeDays"
-                    v-model.lazy="set.days"
+                    v-model="set.days"
                     type="range" 
                     class="custom-range custom-range-light my-0" 
                     min="30" max="360">
@@ -78,16 +78,6 @@
                 <button @click="set.ifr=chNum(set.ifr,-1)" class="btn btn-light" type="button">-</button>
             </div>
         </div>
-
-        <!-- <label for="linlog" class="mt-1">Chart Y-axis:</label>
-        <div id="linlog" class="btn-group btn-group-toggle btn-block" data-toggle="buttons" aria-describedby="linlog-help">
-            <label class="btn btn-outline-light btn-sm active">
-                <input type="radio" name="options" id="lin" autocomplete="off" checked> Linear
-            </label>
-            <label class="btn btn-outline-light btn-sm">
-                <input type="radio" name="options" id="log" autocomplete="off"> Logarytmic
-            </label>
-        </div> -->
     </div>
 </template>
 
