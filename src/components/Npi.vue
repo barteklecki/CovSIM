@@ -18,12 +18,11 @@
                 <button v-else @click="activation" class="btn btn-secondary text-light btn-sm">
                     &#9940;
                 </button>
-                <!-- <button class="btn btn-outline-secondary btn-sm">&#9776;</button> -->
             </div>
         </div>
         <div class="col col-lg-8">
             <div>
-                <multi-slider :val="val" style="min-height: 31px"></multi-slider>
+                <custom-range :val="val" style="min-height: 31px"></custom-range>
             </div>
         </div>
         </div>
@@ -31,10 +30,10 @@
 </template>
 
 <script>
-import multiSlider from './MultiSlider.vue';
+import customRange from './CustomRange.vue';
 export default {
     components: {
-        'multi-slider': multiSlider
+        'custom-range': customRange
     },
     props: {
         val: { type: Object },
