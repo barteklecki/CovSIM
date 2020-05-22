@@ -7,21 +7,26 @@
                     Title:
                 </div>
             </div>
-            <input  type="text" 
-                    id="title" 
-                    class="form-control form-control-light form-control-sm" 
-                    maxlength="50"
-                    aria-describedby="title-help">
+            <input  v-model="settings.simTitle"
+                    type="text" 
+                    id="sim-title" 
+                    class="form-control form-control-light form-control-sm text-right" 
+                    maxlength="50">
         </div>
         <div class="form-group mt-1 form-sm">
             <label for="formControlRange" class="font-weight-light mb-0 mt-2">
-                Duration of simulation: <span  class="font-weight-bold">{{ set.days }} days</span>
+                Duration of simulation: 
+                <span  class="font-weight-bold">
+                    {{ settings.daysOfSim }} days
+                </span>
             </label>
-            <input  :step="15" id="rangeDays"
-                    v-model="set.days"
-                    type="range" 
+            <input  v-model="settings.daysOfSim"
+                    type="range"
+                    id="days-of-sim"
                     class="custom-range custom-range-light my-0" 
-                    min="30" max="360">
+                    min="30"
+                    max="360"
+                    step="15">
         </div>
         <div class="input-group input-group-sm mt-1">
             <div class="input-group-prepend input-group-sm input-group-light">
@@ -29,16 +34,21 @@
                     Day zero:
                 </div>
             </div>
-            <input  v-model.lazy="set.dayZero"
-                    @change="set.dayZero=chNum(set.dayZero,0,10)" 
+            <input  v-model.lazy="settings.casesAtBeginning"
+                    @change="settings.casesAtBeginning=changeNumber(settings.casesAtBeginning,0,1)" 
                     type="text" 
-                    id="dayzero" 
+                    id="cases-at-beginning" 
                     class="form-control form-control-light form-control-sm text-right"
-                    maxlength="6" 
-                    aria-describedby="title-help">
+                    maxlength="6">
             <div class="input-group-append" id="button-addon4">
-                <button @click="set.dayZero=chNum(set.dayZero,1)"  class="btn btn-light" type="button">+</button>
-                <button @click="set.dayZero=chNum(set.dayZero,-1)" class="btn btn-light" type="button">-</button>
+                <button @click="settings.casesAtBeginning=changeNumber(settings.casesAtBeginning,1,1)"  
+                    class="btn btn-light" type="button">
+                    +
+                </button>
+                <button @click="settings.casesAtBeginning=changeNumber(settings.casesAtBeginning,-1,1)" 
+                    class="btn btn-light" type="button">
+                    -
+                </button>
             </div>
         </div>
         <div class="input-group input-group-sm mt-1">
@@ -47,35 +57,44 @@
                     Ro:
                 </div>
             </div>
-            <input  v-model.lazy="set.ro"
-                    @change="set.ro=chNum(set.ro,0,1)" 
+            <input  v-model.lazy="settings.reproductionNumber"
+                    @change="settings.reproductionNumber=changeNumber(settings.reproductionNumber,0,0.1,20,2)" 
                     type="text" 
-                    id="ro" 
+                    id="reproduction-number" 
                     class="form-control form-control-light form-control-sm text-right" 
-                    maxlength="6"
-                    aria-describedby="title-help">
+                    maxlength="6">
             <div class="input-group-append" id="button-addon4">
-                <button @click="set.ro=chNum(set.ro,0.01)"  class="btn btn-light" type="button">+</button>
-                <button @click="set.ro=chNum(set.ro,-0.01)" class="btn btn-light" type="button">-</button>
+                <button @click="settings.reproductionNumber=changeNumber(settings.reproductionNumber,0.01,0.1,20,2)"  
+                    class="btn btn-light" type="button">
+                    +
+                </button>
+                <button @click="settings.reproductionNumber=changeNumber(settings.reproductionNumber,-0.01,0.1,20,2)" 
+                    class="btn btn-light" type="button">
+                    -
+                </button>
             </div>
         </div>
-
         <div class="input-group input-group-sm mt-1">
             <div class="input-group-prepend input-group-sm">
                 <div class="input-group-text bg-white">
                     IFR[%]:
                 </div>
             </div>
-            <input  v-model.lazy="set.ifr" 
-                    @change="set.ifr=chNum(set.ifr,0,10)"
+            <input  v-model.lazy="settings.infectionFatalityRate" 
+                    @change="settings.infectionFatalityRate=changeNumber(settings.infectionFatalityRate,0,1,100)"
                     type="text" 
                     id="ifr" 
                     class="form-control form-control-light form-control-sm text-right" 
-                    maxlength="6"
-                    aria-describedby="title-help">
+                    maxlength="6">
             <div class="input-group-append" id="button-addon4">
-                <button @click="set.ifr=chNum(set.ifr,1)"  class="btn btn-light" type="button">+</button>
-                <button @click="set.ifr=chNum(set.ifr,-1)" class="btn btn-light" type="button">-</button>
+                <button @click="settings.infectionFatalityRate=changeNumber(settings.infectionFatalityRate,1,1,100)"  
+                    class="btn btn-light" type="button">
+                    +
+                </button>
+                <button @click="settings.infectionFatalityRate=changeNumber(settings.infectionFatalityRate,-1,1,100)" 
+                    class="btn btn-light" type="button">
+                    -
+                </button>
             </div>
         </div>
     </div>
@@ -83,13 +102,22 @@
 
 <script>
 export default {
-    props: ['set'],
+    props: ['settings'],
     methods: {
-        chNum(num,x,def=0) {
+        changeNumber(num, addToNum, minNum=0, maxNum=0, decimalPlaces=0) {
+            const multiplier = Math.pow(10, decimalPlaces);
             num = Number(num);
-            num += x;
-            if ( num < 0 || isNaN(num) ) { num = def; }
-            return (Math.round(num*100)/100);
+            if (isNaN(num)) { 
+                num = minNum; 
+            }
+            num += addToNum;
+            if (num < minNum) { 
+                num = minNum; 
+            }
+            if (maxNum && (num > maxNum)) { 
+                num = maxNum; 
+            }
+            return Math.round(num*multiplier)/multiplier;
         }
     }   
 }

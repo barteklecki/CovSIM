@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar navbar-expand-lg navbar-light bg-light px-3 py-0 mb-3 fixed-top shadow-sm">
-      <a class="navbar-brand mx-3 font-weight-bold" href="#">
-        <img src="../img/covico.svg" width="30" height="30" class="d-inline-block align-top mx-2" alt="">
+      <a class="navbar-brand mx-3 font-weight-bold">
+        <img src="../img/covico.svg" class="logo d-inline-block align-top mx-2" alt="CovSIM">
         COVSIM
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" 
@@ -61,8 +61,8 @@ export default {
         eventBus.$on('set-link', (link) => {
             this.shareLink = link;
         });
-        eventBus.$on('is-share-visible', (isVisible) => {
-            this.isShareVisible = isVisible;
+        eventBus.$on('is-share-visible', (vis) => {
+            this.isShareVisible = vis;
         });
     }
 }
@@ -71,5 +71,10 @@ export default {
 <style>
     #link {
         min-width: 350px;
+    }
+
+    .logo {
+        width: 30px;
+        height: 30px;
     }
 </style>

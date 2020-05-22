@@ -1,12 +1,12 @@
 <template>
-    <div class="ms" 
-        :id="'ms'+val.id" 
+    <div class="cr" 
+        :id="'cr'+range.id" 
         :style="{background: grid}"
         @click="getClick($event)" 
-        @dblclick="resetBar()">
-            <div id="msBar"
-                :class="{disactive: !val.active}" 
-                :style="[{'margin-left': relA + '%'},{width: relAB +'%'}]">
+        @dblclick="resetRange()">
+            <div id="crBar"
+                :class="{disactive: !range.isActive}" 
+                :style="[{'margin-left': relativeBarPosition + '%'},{width: relativeBarLength +'%'}]">
             </div>
     </div>
 </template>
@@ -14,89 +14,90 @@
 <script>
 export default {
     props: {
-        val: { 
+        range: { 
             type: Object,
             default: function() { return {
-                id:     0,     // unique identifier
-                active: true,  // component is active
-                steps:  10,    // number of discrete steps
-                valA:   0,     // bar starting point
-                valB:   0,     // bar ending point
-                min:    0,     // lower value limiter (0=no limit)
-                max:    0      // upper value limiter (0=no limit)
+                id:     0,
+                isActive: true,
+                steps:  10,
+                starts:   0,
+                ends:   0,      
             }; }
         }
     },
     data() { return { 
-        relA:    0,             // bar starting relative in %
-        relAB:   0,             // bar lenght   relative in %
-        grid:    ''             // placeholder for bg grid string
+        relativeBarPosition: 0, 
+        relativeBarLength: 0, 
+        grid: ''
     }; },
     mounted() {             
-        this.setBar(this.val.valA);
-        this.getBGGrad;
+        this.setBar(this.range.starts);
+        this.setBGGrid;
     },
     computed: {
-        getBGGrad() {      
-            let i = (1 / this.val.steps) * 100;
+        setBGGrid() {      
+            let i = (1 / this.range.steps) * 100;
             this.grid = 'repeating-linear-gradient(90deg, white, white '+i+'%, #f8f8f8 '+i+'%, #f8f8f8 '+(i*2)+'%)';
         }
     },
     methods: {
         getClick(event) {   
-            let el = document.getElementById('ms'+this.val.id);   
-            let length = el.clientWidth;
-            let pos = event.pageX - el.getBoundingClientRect().left;
-            let step = Math.round(pos / (length / this.val.steps));
-            if (this.val.min && step < this.val.min) { step = this.val.min; } 
-            if (this.val.max && step > this.val.max) { step = this.val.max; }
-            this.setBar(step);
-            this.getBGGrad;
-        },
-        setData() { 
-            this.relA  = this.val.valA  / this.val.steps * 100;                 
-            this.relAB = (this.val.valB-this.val.valA) / this.val.steps * 100;
-        },
-        setBar(step) {
-            if (!this.val.active) {
-                console.log('[component deactivated]'); 
-            } else if (step > this.val.valA && this.val.valB == 0) {    
-                this.val.valA  = step;                  
-                this.val.valB = this.val.steps;
-            } else if (step < this.val.valA + ((this.val.valB-this.val.valA)/2)) {  // 1                                        
-                this.val.valA = step;
-            } else if (step >= this.val.valA + ((this.val.valB-this.val.valA)/2)) { // 2                     
-                this.val.valB = step;                 
-            } else {       
-                console.log('[ms-idle-click]');
-            }
-            this.setData();
-            if (!this.val.id) {
-                this.val.id = Math.round(Math.random()*10000); 
-            } 
-            return;
-        },
-        resetBar() {    
-            if (this.val.active) {
-                this.val.valA = 0;
-                this.val.valB = 0;
-                this.relA     = 0;
-                this.relAB    = 0;
-            }
-            return;
+            let element = document.getElementById('cr'+this.range.id);   
+            let length = element.clientWidth;
+            let positionFromLeft = event.pageX - element.getBoundingClientRect().left;
+            let clickedStep = Math.round(positionFromLeft / (length / this.range.steps));
 
+            if (clickedStep < 0) { clickedStep = 0; } 
+            if (clickedStep > this.range.steps) { clickedStep = this.range.steps; }
+            this.setBar(clickedStep);
+            this.setBGGrid;
+        },
+        setRelativeBarSize() { 
+            this.relativeBarPosition = this.range.starts  / this.range.steps * 100;                 
+            this.relativeBarLength = (this.range.ends-this.range.starts) / this.range.steps * 100;
+        },
+        setBar(clickedStep) {
+            if (!this.range.isActive) {
+                console.log('[component deactivated]'); 
+            } else if (clickedStep > this.range.starts && this.range.ends == 0) {    
+                this.range.starts = clickedStep;                  
+                this.range.ends = this.range.steps;
+            } else if (clickedStep < this.range.starts + ((this.range.ends-this.range.starts)/2)) {  // 1                                        
+                this.range.starts = clickedStep;
+            } else if (clickedStep >= this.range.starts + ((this.range.ends-this.range.starts)/2)) { // 2                     
+                this.range.ends = clickedStep;                 
+            } else {       
+                console.log('[cr-idle-click]');
+            }
+
+            this.setRelativeBarSize();
+            return;
+        },
+        resetRange() {    
+            if (this.range.isActive) {
+                this.range.starts = 0;
+                this.range.ends = 0;
+                this.relativeBarPosition = 0;
+                this.relativeBarLength = 0;
+            }
+            return;
+        },
+        setUniqueID() {
+            if (!this.range.id) {
+                this.range.id = Math.round(Math.random()*100000); 
+            } 
         }
     },
     watch: {
-        'val.steps':function() {
-            this.getBGGrad;
+        'range.steps'() {
+            this.setBGGrid;
         }     
     }
 }
 </script>
 
 <style>
-    .ms {
+    .cr {
         border-width: 1px;
         border-color: #707070;
         border-style: solid;
@@ -105,14 +106,14 @@ export default {
         width: 100%;
     }
 
-    #msBar {
+    #crBar {
         background-color: #7fffd4;
         min-height: 29px;  
         font-size: 8px;
         cursor: col-resize;
     }
 
-    #msBar.disactive {
+    #crBar.disactive {
         background-color: #d3d3d39f;
         border-width: 1px;
         border-style: solid;
