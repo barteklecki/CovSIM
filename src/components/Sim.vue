@@ -73,15 +73,15 @@ export default {
             infectionFatalityRate:  10  
         },
         npis: [               // app list of NPIs - default rangeues
-            { name: 'media information',  isVisible: 1, ror: 0.05, range: { id: 0, isActive: 1, steps: 30, starts:  7, ends: 30} },
-            { name: 'handwashing',        isVisible: 1, ror: 0.10, range: { id: 1, isActive: 1, steps: 30, starts: 14, ends: 30} },
-            { name: 'facemasks',          isVisible: 1, ror: 0.20, range: { id: 2, isActive: 1, steps: 30, starts: 16, ends: 30} },
-            { name: 'taking temperature', isVisible: 1, ror: 0.20, range: { id: 3, isActive: 0, steps: 30, starts: 18, ends: 30} },
-            { name: 'social distancing',  isVisible: 1, ror: 0.25, range: { id: 4, isActive: 0, steps: 30, starts: 20, ends: 30} },
-            { name: 'quarantining cases', isVisible: 1, ror: 0.30, range: { id: 5, isActive: 0, steps: 30, starts: 22, ends: 30} },
-            { name: 'stay at home',       isVisible: 1, ror: 0.40, range: { id: 6, isActive: 0, steps: 30, starts: 24, ends: 30} },
-            { name: 'soft lockdown',      isVisible: 1, ror: 0.80, range: { id: 7, isActive: 0, steps: 30, starts: 26, ends: 30} },
-            { name: 'hard lockdown',      isVisible: 0, ror: 0.95, range: { id: 8, isActive: 0, steps: 30, starts: 28, ends: 30} }
+            { name: 'media information',  isVisible: 1, ror: 0.05, range: { isActive: 1, steps: 30, starts:  7, ends: 30} },
+            { name: 'handwashing',        isVisible: 1, ror: 0.10, range: { isActive: 1, steps: 30, starts: 14, ends: 30} },
+            { name: 'facemasks',          isVisible: 1, ror: 0.20, range: { isActive: 1, steps: 30, starts: 16, ends: 30} },
+            { name: 'taking temperature', isVisible: 1, ror: 0.20, range: { isActive: 0, steps: 30, starts: 18, ends: 30} },
+            { name: 'social distancing',  isVisible: 1, ror: 0.25, range: { isActive: 0, steps: 30, starts: 20, ends: 30} },
+            { name: 'quarantining cases', isVisible: 1, ror: 0.30, range: { isActive: 0, steps: 30, starts: 22, ends: 30} },
+            { name: 'stay at home',       isVisible: 1, ror: 0.40, range: { isActive: 0, steps: 30, starts: 24, ends: 30} },
+            { name: 'soft lockdown',      isVisible: 1, ror: 0.80, range: { isActive: 0, steps: 30, starts: 26, ends: 30} },
+            { name: 'hard lockdown',      isVisible: 0, ror: 0.95, range: { isActive: 0, steps: 30, starts: 28, ends: 30} }
             ],  
         chartdata: { 
             labels: [1,2,3],

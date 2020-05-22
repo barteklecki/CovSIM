@@ -30,6 +30,9 @@ export default {
         relativeBarLength: 0, 
         grid: ''
     }; },
+    created() {
+        this.setUniqueID();
+    },
     mounted() {             
         this.setBar(this.range.starts);
         this.setBGGrid;
@@ -84,7 +87,7 @@ export default {
         },
         setUniqueID() {
             if (!this.range.id) {
-                this.range.id = Math.round(Math.random()*100000); 
+                this.range.id = Math.round(Math.random()*10000); 
             } 
         }
     },
