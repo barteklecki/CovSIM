@@ -184,7 +184,7 @@ export default {
         this.chartDraw();                  
     },
     nodeSubmit() {  
-        this.$http.post('https://covsim-7ce15.firebaseio.com/csnode.json', { settings: this.settings, npis: this.npis} )
+        this.$http.post('/csnode.json', { settings: this.settings, npis: this.npis} )
                 .then(response => { 
                       console.log(response);
                       if(response.status === 200) { 
@@ -197,7 +197,7 @@ export default {
                 });  
     },
     nodeFetch(key) {  
-        this.$http.get('https://covsim-7ce15.firebaseio.com/csnode/'+key+'.json')
+        this.$http.get('/csnode/'+key+'.json')
                 .then(response => { 
                       return response.json();
                   }, error => {

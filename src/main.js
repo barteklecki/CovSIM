@@ -9,6 +9,8 @@ import { routes } from './routes.js';
 Vue.use(VueResource);
 Vue.use(VueRouter);
 
+Vue.http.options.root = "https://covsim-7ce15.firebaseio.com";
+
 const router = new VueRouter({
    routes: routes,     
    mode: 'hash'    
