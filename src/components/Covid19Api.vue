@@ -1,7 +1,6 @@
-<!-- obsolete component -->
 <template>
     <div @click="covGet">
-        <slot></slot> {{ str }}
+        <slot></slot>
     </div>
 </template>
 
@@ -9,30 +8,21 @@
 export default {
     data() {
         return {
-            obj: [],
-            str: ''
+            dataContainer: []
         }
     },
     methods: {
         covGet() {
             this.$http.get('https://api.covid19api.com/summary')
                 .then(response => { 
-                    console.log('RES: '+response)
+                    console.log('RES: ' + response);
                     return response.json();
                 })
                 .then(data => { 
-                    this.obj = data;
-                    console.log('DATA: '+data);
-                    console.log('OBJ: '+this.obj);
-
+                    this.dataContainer = data;
+                    console.log('DATA: ' + this.dataContainer);
                 });
-
-
         }
-    },
-    created() {
-        //this.covGet();
-
     }
 }
 </script>

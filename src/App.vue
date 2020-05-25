@@ -2,8 +2,8 @@
   <div id="app">
     <app-header></app-header>
     <router-view></router-view>
-    <footer class="page-footer font-small indigo">
-      <div class="footer-copyright text-center py-3">
+    <footer class="page-footer font-small">
+      <div class="footer-copyright text-center py-1">
         <a class="text-light" href="https://github.com/barteklecki/CovSIM">
           Copyright 2020 by BarLec
         </a>

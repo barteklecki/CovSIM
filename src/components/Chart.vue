@@ -1,4 +1,4 @@
-<!--<template></template>-->
+<!-- do NOT add <template> ! -->
 
 <script>
 import { Line, mixins } from 'vue-chartjs'
@@ -11,13 +11,6 @@ export default {
     mounted () {
         this.renderChart(this.chartData, this.options)
     }
-    // methods: {
-    //     update(newData) {
-    //         console.log('updating', newData)
-    //         this.chartData.datasets.push(newData)
-    //         this._chart.update()      
-    //     }
-    // }
 }
 </script>
 

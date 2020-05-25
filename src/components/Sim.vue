@@ -2,7 +2,7 @@
     <main class="container mt-5">
       <div class="row align-items-center m-12">
           <div class="col-lg-3 my-1 p-3 bg-dark text-light align-self-stretch">
-            <app-settings :set="set"></app-settings>
+            <app-settings :settings="settings"></app-settings>
           </div>
           <div class="chart-container col-lg-9 my-1 p-3 bg-light text-right">
             <app-chart id="chart" class="float-right"
@@ -23,11 +23,11 @@
                   &#65291;
                 </button>
                 <div class="dropdown-menu shadow-sm" aria-labelledby="dropdownMenuButton">
-                    <a  v-for="n in notVisibleNpis" 
-                        @click="n.visible = !n.visible" 
+                    <a  v-for="npi in notVisibleNpis" 
+                        @click="npi.isVisible = !npi.isVisible" 
                         class="dropdown-item" 
                         :key="">
-                            {{n.name}} (Ro-{{n.ror}})
+                            {{npi.name}} (Ro-{{npi.ror}})
                     </a>
                 </div>
                 <span class="ml-3 text-dark font-weight-light">
@@ -36,9 +36,9 @@
                     </span>
               </div>
               <comp-npi 
-                  v-for="n in visibleNpis" 
-                  :val="n.val" 
-                  :set="n" 
+                  v-for="npi in visibleNpis" 
+                  :range="npi.range" 
+                  :npi="npi" 
                   :key="">
               </comp-npi>
           </div>
@@ -63,26 +63,25 @@ export default {
   },  
   data () {     
     return {
-        set: {                // default app settings
-            title:      '',   // sim title 
-            days:       30,   // days of symulation
-            dayZero:    10,   // case count at day zero
-            ro:         0.5,  // pathogen reproduction number
-            incubation: 1,    // avrage incubation period in days
-            hospit:     1,    // avrage hospitalisation period in days
-            ifr:        10,   // avrage infaction fatality rate
-            linlog:     0     // y-axis 0-linear 1-log
+        settings: {              
+            simTitle:               '',  
+            daysOfSim:              30,  
+            casesAtBeginning:       10, 
+            reproductionNumber:    0.4,
+            incubationPeriod:        1,   
+            hospitalisationPeriond:  1,
+            infectionFatalityRate:  10  
         },
-        npis: [               // app list of NPIs - default values
-            { name: 'media information',    visible: 1, ror: 0.05, val: { id: 0, active: 1, steps: 30, valA:  7, valB: 30, min: 0,max: 0  } },
-            { name: 'handwashing',          visible: 1, ror: 0.10, val: { id: 1, active: 1, steps: 30, valA: 14, valB: 30, min: 0,max: 0  } },
-            { name: 'facemasks',            visible: 1, ror: 0.20, val: { id: 2, active: 1, steps: 30, valA: 16, valB: 30, min: 0,max: 0  } },
-            { name: 'taking temperature',   visible: 1, ror: 0.20, val: { id: 3, active: 0, steps: 30, valA: 18, valB: 30, min: 0,max: 0  } },
-            { name: 'social distancing',    visible: 1, ror: 0.25, val: { id: 4, active: 0, steps: 30, valA: 20, valB: 30, min: 0,max: 0  } },
-            { name: 'quarantining cases',   visible: 1, ror: 0.30, val: { id: 5, active: 0, steps: 30, valA: 22, valB: 30, min: 0,max: 0  } },
-            { name: 'stay at home',         visible: 1, ror: 0.40, val: { id: 6, active: 0, steps: 30, valA: 24, valB: 30, min: 0,max: 0  } },
-            { name: 'soft lockdown',        visible: 1, ror: 0.80, val: { id: 7, active: 0, steps: 30, valA: 26, valB: 30, min: 0,max: 0  } },
-            { name: 'hard lockdown',        visible: 0, ror: 0.95, val: { id: 8, active: 0, steps: 30, valA: 28, valB: 30, min: 0,max: 0  } }
+        npis: [            
+            { name: 'media information',  isVisible: 1, ror: 0.05, range: { isActive: 1, steps: 30, starts:  7, ends: 30} },
+            { name: 'handwashing',        isVisible: 1, ror: 0.10, range: { isActive: 1, steps: 30, starts: 14, ends: 30} },
+            { name: 'facemasks',          isVisible: 1, ror: 0.20, range: { isActive: 1, steps: 30, starts: 16, ends: 30} },
+            { name: 'taking temperature', isVisible: 1, ror: 0.20, range: { isActive: 0, steps: 30, starts: 18, ends: 30} },
+            { name: 'social distancing',  isVisible: 1, ror: 0.25, range: { isActive: 0, steps: 30, starts: 20, ends: 30} },
+            { name: 'quarantining cases', isVisible: 1, ror: 0.30, range: { isActive: 0, steps: 30, starts: 22, ends: 30} },
+            { name: 'stay at home',       isVisible: 1, ror: 0.40, range: { isActive: 0, steps: 30, starts: 24, ends: 30} },
+            { name: 'soft lockdown',      isVisible: 1, ror: 0.80, range: { isActive: 0, steps: 30, starts: 26, ends: 30} },
+            { name: 'hard lockdown',      isVisible: 0, ror: 0.95, range: { isActive: 0, steps: 30, starts: 28, ends: 30} }
             ],  
         chartdata: { 
             labels: [1,2,3],
@@ -129,16 +128,16 @@ export default {
                   fill: "origin"
               }],
           };
-          this.curveCalc(this.set.days);
+          this.curveCalc(this.settings.daysOfSim);
     },
-    curveCalc(days){  
+    curveCalc(days){ 
         days = Math.round(days);
         if (days < 10) { days = 10; }
         if (days > 365) { days = 365; }
-        if (isNaN(days) || days == null)  { days = 30; }
-        
+        if (isNaN(days) || days === null)  { days = 30; }
+
         this.chartdata.labels.push(1);
-        this.chartdata.datasets[0].data.push(this.set.dayZero);
+        this.chartdata.datasets[0].data.push(this.settings.casesAtBeginning);
         this.chartdata.datasets[1].data.push(0);
         let rro = 0;
         let n = 0;
@@ -149,35 +148,35 @@ export default {
           n = 0;
           
           for (let j = 0; j < this.npis.length; j++) {
-            if (this.npis[j].visible && this.npis[j].val.active && i > this.npis[j].val.valA && i < this.npis[j].val.valB)                      {
+            if (this.npis[j].isVisible && this.npis[j].range.isActive && i > this.npis[j].range.starts && i < this.npis[j].range.ends)                      {
               rro += this.npis[j].ror;
             }
           }
           
-          if (i - this.set.incubation < 1 || this.set.ro - rro < 0) {
+          if (i - this.settings.incubationPeriod < 1 || this.settings.reproductionNumber - rro < 0) {
             this.chartdata.datasets[0].data.push(this.chartdata.datasets[0].data[i-1]);
           } else {
-            this.chartdata.datasets[0].data.push(Math.round(((this.set.ro - rro) * this.chartdata.datasets[0].data[i-1])+1+this.chartdata.datasets[0].data[i-1]));
+            this.chartdata.datasets[0].data.push(Math.round(((this.settings.reproductionNumber - rro) * this.chartdata.datasets[0].data[i-1])+1+this.chartdata.datasets[0].data[i-1]));
           }
 
-          if (i - this.set.hospit < 1) {
+          if (i - this.settings.hospitalisationPeriond < 1) {
             this.chartdata.datasets[1].data.push(this.chartdata.datasets[1].data[i-1]);
           } else {
-            this.chartdata.datasets[1].data.push(Math.round(this.chartdata.datasets[0].data[i-1] * this.set.ifr / 100 ));
+            this.chartdata.datasets[1].data.push(Math.round(this.chartdata.datasets[0].data[i-1] * this.settings.infectionFatalityRate / 100 ));
           }          
         }
     },
     refresh() {    
-        if (this.npis[0].val.steps !== this.set.days) {
+        if (this.npis[0].range.steps !== this.settings.daysOfSim) {
           for (let i = 0; i < this.npis.length; i++) {
-            if(this.npis[i].val.valB=this.npis[i].val.steps)
-              if(this.npis[i].val.valA < this.set.days) {
-                this.npis[i].val.steps = this.set.days;
-                this.npis[i].val.valB  = this.set.days;
+            if(this.npis[i].range.ends=this.npis[i].range.steps)
+              if(this.npis[i].range.starts < this.settings.daysOfSim) {
+                this.npis[i].range.steps = this.settings.daysOfSim;
+                this.npis[i].range.ends  = this.settings.daysOfSim;
               } else {
-                this.npis[i].val.valA = 0;
-                this.npis[i].val.valB = 0;
-                this.npis[i].val.steps = this.set.days;
+                this.npis[i].range.starts = 0;
+                this.npis[i].range.ends = 0;
+                this.npis[i].range.steps = this.settings.daysOfSim;
               }
           }
         }
@@ -185,32 +184,32 @@ export default {
         this.chartDraw();                  
     },
     nodeSubmit() {  
-        this.$http.post('https://covsim-7ce15.firebaseio.com/csnode.json', { set: this.set, npis: this.npis} )
+        this.$http.post('csnode.json', { settings: this.settings, npis: this.npis} )
                 .then(response => { 
                       console.log(response);
                       if(response.status === 200) { 
-                        eventBus.$emit('set-link', window.location.href.split('sim/')[0]+'sim/'+response.body.name);
+                        eventBus.$emit('set-link', window.location.href.split('sim/')[0]+'sim/' + response.body.name);
                       } else {
-                        eventBus.$emit('set-link', 'error: '+response.statusText);
+                        eventBus.$emit('set-link', 'error: ' + response.statusText);
                       }
                   }, error => {
                       console.tag('[ERR: no database connection]');
                 });  
     },
     nodeFetch(key) {  
-        this.$http.get('https://covsim-7ce15.firebaseio.com/csnode/'+key+'.json')
+        this.$http.get('csnode/' + key + '.json')
                 .then(response => { 
                       return response.json();
                   }, error => {
                       console.tag('[ERR: no database connection]');
                 })
                 .then( data => {
-                      console.log(data);
+                      console.table(data);
                       this.setByNode(data);
                 });
     },
     setByNode(node) { 
-        this.set = node.set;
+        this.settings = node.settings;
         this.npis = node.npis;
         this.refresh();
     }
@@ -219,7 +218,7 @@ export default {
         visibleNpis() {  
                 let n=[];
                 for(let i = 0; i < this.npis.length; i++) {
-                    if(this.npis[i].visible) {
+                    if(this.npis[i].isVisible) {
                         n.push(this.npis[i]);
                     }
                 }
@@ -228,7 +227,7 @@ export default {
         notVisibleNpis() {  
                 let n=[];
                 for(let i = 0; i < this.npis.length; i++) {
-                    if(!this.npis[i].visible) {
+                    if(!this.npis[i].isVisible) {
                         n.push(this.npis[i]);
                     }
                 }
@@ -252,11 +251,11 @@ export default {
     eventBus.$emit('is-share-visible', false);   
   },
   watch: {
-    'set.days': function() {                
+    'settings.daysOfSim': function() {                
       this.refresh();
     },
-    set: {
-      handler(val){                     
+    settings: {
+      handler(val){         //range            
         this.refresh();
       },
       deep: true
