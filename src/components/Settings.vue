@@ -35,18 +35,27 @@
                 </div>
             </div>
             <input  v-model.lazy="settings.casesAtBeginning"
-                    @change="settings.casesAtBeginning=changeNumber(settings.casesAtBeginning,0,1)" 
+                    @change="settings.casesAtBeginning=changeNumber({ num: settings.casesAtBeginning,
+                                                                        addToNum: 0,
+                                                                        minNum: 1,
+                                                                        maxNum: 1000 })" 
                     type="text" 
                     id="cases-at-beginning" 
                     class="form-control form-control-light form-control-sm text-right"
                     maxlength="6">
             <div class="input-group-append" id="button-addon4">
-                <button @click="settings.casesAtBeginning=changeNumber(settings.casesAtBeginning,1,1)"  
-                    class="btn btn-light" type="button">
+                <button @click="settings.casesAtBeginning=changeNumber({ num: settings.casesAtBeginning,
+                                                                        addToNum: 1,
+                                                                        minNum: 1,
+                                                                        maxNum: 1000 })"
+                    class="btn btn-light">
                     +
                 </button>
-                <button @click="settings.casesAtBeginning=changeNumber(settings.casesAtBeginning,-1,1)" 
-                    class="btn btn-light" type="button">
+                <button @click="settings.casesAtBeginning=changeNumber({ num: settings.casesAtBeginning,
+                                                                        addToNum: -1,
+                                                                        minNum: 1,
+                                                                        maxNum: 1000 })"
+                    class="btn btn-light">
                     -
                 </button>
             </div>
@@ -58,18 +67,30 @@
                 </div>
             </div>
             <input  v-model.lazy="settings.reproductionNumber"
-                    @change="settings.reproductionNumber=changeNumber(settings.reproductionNumber,0,0.1,20,2)" 
+                    @change="settings.reproductionNumber=changeNumber({ num: settings.reproductionNumber,
+                                                                        addToNum: 0,
+                                                                        minNum: 0.01,
+                                                                        maxNum: 20,
+                                                                        decimalPlaces: 2 })"
                     type="text" 
                     id="reproduction-number" 
                     class="form-control form-control-light form-control-sm text-right" 
                     maxlength="6">
             <div class="input-group-append" id="button-addon4">
-                <button @click="settings.reproductionNumber=changeNumber(settings.reproductionNumber,0.01,0.1,20,2)"  
-                    class="btn btn-light" type="button">
+                <button @click="settings.reproductionNumber=changeNumber({ num: settings.reproductionNumber,
+                                                                        addToNum: 0.01,
+                                                                        minNum: 0.01,
+                                                                        maxNum: 20,
+                                                                        decimalPlaces: 2 })"  
+                    class="btn btn-light">
                     +
                 </button>
-                <button @click="settings.reproductionNumber=changeNumber(settings.reproductionNumber,-0.01,0.1,20,2)" 
-                    class="btn btn-light" type="button">
+                <button @click="settings.reproductionNumber=changeNumber({ num: settings.reproductionNumber,
+                                                                        addToNum: -0.01,
+                                                                        minNum: 0.01,
+                                                                        maxNum: 20,
+                                                                        decimalPlaces: 2 })" 
+                    class="btn btn-light">
                     -
                 </button>
             </div>
@@ -81,18 +102,27 @@
                 </div>
             </div>
             <input  v-model.lazy="settings.infectionFatalityRate" 
-                    @change="settings.infectionFatalityRate=changeNumber(settings.infectionFatalityRate,0,1,100)"
+                    @change="settings.infectionFatalityRate=changeNumber({ num: settings.infectionFatalityRate,
+                                                                            addToNum: 0,
+                                                                            minNum: 1,
+                                                                            maxNum: 99 })"
                     type="text" 
                     id="ifr" 
                     class="form-control form-control-light form-control-sm text-right" 
                     maxlength="6">
             <div class="input-group-append" id="button-addon4">
-                <button @click="settings.infectionFatalityRate=changeNumber(settings.infectionFatalityRate,1,1,100)"  
-                    class="btn btn-light" type="button">
+                <button @click="settings.infectionFatalityRate=changeNumber({ num: settings.infectionFatalityRate,
+                                                                            addToNum: 1,
+                                                                            minNum: 1,
+                                                                            maxNum: 99 })"  
+                    class="btn btn-light">
                     +
                 </button>
-                <button @click="settings.infectionFatalityRate=changeNumber(settings.infectionFatalityRate,-1,1,100)" 
-                    class="btn btn-light" type="button">
+                <button @click="settings.infectionFatalityRate=changeNumber({ num: settings.infectionFatalityRate,
+                                                                            addToNum: -1,
+                                                                            minNum: 1,
+                                                                            maxNum: 99 })" 
+                    class="btn btn-light">
                     -
                 </button>
             </div>
@@ -102,9 +132,19 @@
 
 <script>
 export default {
-    props: ['settings'],
+    props: {
+        settings: {
+            simTitle:               { type: String, default: '' },  
+            daysOfSim:              { type: Number, default: 30 },  
+            casesAtBeginning:       { type: Number, default: 10 }, 
+            reproductionNumber:     { type: Number, default: 0.5 },
+            incubationPeriod:       { type: Number, default: 1 },   
+            hospitalisationPeriond: { type: Number, default: 1 },
+            infectionFatalityRate:  { type: Number, default: 10 } 
+        }
+    },
     methods: {
-        changeNumber(num, addToNum, minNum=0, maxNum=0, decimalPlaces=0) {
+        changeNumber({num, addToNum, minNum = 0, maxNum = 0, decimalPlaces = 0}) {
             const multiplier = Math.pow(10, decimalPlaces);
             num = Number(num);
             if (isNaN(num)) { 
@@ -117,7 +157,7 @@ export default {
             if (maxNum && (num > maxNum)) { 
                 num = maxNum; 
             }
-            return Math.round(num*multiplier)/multiplier;
+            return Math.round(num * multiplier) / multiplier;
         }
     }   
 }

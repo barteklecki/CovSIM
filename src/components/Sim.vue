@@ -23,11 +23,11 @@
                   &#65291;
                 </button>
                 <div class="dropdown-menu shadow-sm" aria-labelledby="dropdownMenuButton">
-                    <a  v-for="n in notVisibleNpis" 
-                        @click="n.isVisible = !n.isVisible" 
+                    <a  v-for="npi in notVisibleNpis" 
+                        @click="npi.isVisible = !npi.isVisible" 
                         class="dropdown-item" 
                         :key="">
-                            {{n.name}} (Ro-{{n.ror}})
+                            {{npi.name}} (Ro-{{npi.ror}})
                     </a>
                 </div>
                 <span class="ml-3 text-dark font-weight-light">
@@ -67,12 +67,12 @@ export default {
             simTitle:               '',  
             daysOfSim:              30,  
             casesAtBeginning:       10, 
-            reproductionNumber:    0.5,
+            reproductionNumber:    0.4,
             incubationPeriod:        1,   
             hospitalisationPeriond:  1,
             infectionFatalityRate:  10  
         },
-        npis: [               // app list of NPIs - default rangeues
+        npis: [            
             { name: 'media information',  isVisible: 1, ror: 0.05, range: { isActive: 1, steps: 30, starts:  7, ends: 30} },
             { name: 'handwashing',        isVisible: 1, ror: 0.10, range: { isActive: 1, steps: 30, starts: 14, ends: 30} },
             { name: 'facemasks',          isVisible: 1, ror: 0.20, range: { isActive: 1, steps: 30, starts: 16, ends: 30} },
@@ -134,7 +134,7 @@ export default {
         days = Math.round(days);
         if (days < 10) { days = 10; }
         if (days > 365) { days = 365; }
-        if (isNaN(days) || days == null)  { days = 30; }
+        if (isNaN(days) || days === null)  { days = 30; }
 
         this.chartdata.labels.push(1);
         this.chartdata.datasets[0].data.push(this.settings.casesAtBeginning);
@@ -188,23 +188,23 @@ export default {
                 .then(response => { 
                       console.log(response);
                       if(response.status === 200) { 
-                        eventBus.$emit('set-link', window.location.href.split('sim/')[0]+'sim/'+response.body.name);
+                        eventBus.$emit('set-link', window.location.href.split('sim/')[0]+'sim/' + response.body.name);
                       } else {
-                        eventBus.$emit('set-link', 'error: '+response.statusText);
+                        eventBus.$emit('set-link', 'error: ' + response.statusText);
                       }
                   }, error => {
                       console.tag('[ERR: no database connection]');
                 });  
     },
     nodeFetch(key) {  
-        this.$http.get('csnode/'+key+'.json')
+        this.$http.get('csnode/' + key + '.json')
                 .then(response => { 
                       return response.json();
                   }, error => {
                       console.tag('[ERR: no database connection]');
                 })
                 .then( data => {
-                      console.log(data);
+                      console.table(data);
                       this.setByNode(data);
                 });
     },

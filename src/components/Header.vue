@@ -61,8 +61,8 @@ export default {
         eventBus.$on('set-link', (link) => {
             this.shareLink = link;
         });
-        eventBus.$on('is-share-visible', (vis) => {
-            this.isShareVisible = vis;
+        eventBus.$on('is-share-visible', (isVisible) => {
+            this.isShareVisible = isVisible;
         });
     }
 }

@@ -1,12 +1,12 @@
 <template>
-    <div class="cr" 
-        :id="'cr'+range.id" 
+    <div class="customRange" 
+        :id="'cr' + range.id" 
         :style="{background: grid}"
         @click="getClick($event)" 
         @dblclick="resetRange()">
             <div id="crBar"
                 :class="{disactive: !range.isActive}" 
-                :style="[{'margin-left': relativeBarPosition + '%'},{width: relativeBarLength +'%'}]">
+                :style="{'margin-left': relativeBarPosition + '%',width: relativeBarLength +'%'}">
             </div>
     </div>
 </template>
@@ -15,14 +15,11 @@
 export default {
     props: {
         range: { 
-            type: Object,
-            default: function() { return {
-                id:     0,
-                isActive: true,
-                steps:  10,
-                starts:   0,
-                ends:   0,      
-            }; }
+            id:       { type: Number,  default: 0 },
+            isActive: { type: Boolean, default: true },
+            steps:    { type: Number,  default: 30 },
+            starts:   { type: Number,  default: 0 },
+            ends:     { type: Number,  default: 0 }     
         }
     },
     data() { return { 
@@ -40,12 +37,12 @@ export default {
     computed: {
         setBGGrid() {      
             let i = (1 / this.range.steps) * 100;
-            this.grid = 'repeating-linear-gradient(90deg, white, white '+i+'%, #f8f8f8 '+i+'%, #f8f8f8 '+(i*2)+'%)';
+            this.grid = 'repeating-linear-gradient(90deg, white, white ' + i + '%, #f8f8f8 ' + i + '%, #f8f8f8 '+ (i * 2) + '%)';
         }
     },
     methods: {
         getClick(event) {   
-            let element = document.getElementById('cr'+this.range.id);   
+            let element = document.getElementById('cr' + this.range.id);   
             let length = element.clientWidth;
             let positionFromLeft = event.pageX - element.getBoundingClientRect().left;
             let clickedStep = Math.round(positionFromLeft / (length / this.range.steps));
@@ -62,12 +59,12 @@ export default {
         setBar(clickedStep) {
             if (!this.range.isActive) {
                 console.log('[component deactivated]'); 
-            } else if (clickedStep > this.range.starts && this.range.ends == 0) {    
+            } else if (clickedStep > this.range.starts && this.range.ends === 0) {    
                 this.range.starts = clickedStep;                  
                 this.range.ends = this.range.steps;
-            } else if (clickedStep < this.range.starts + ((this.range.ends-this.range.starts)/2)) {  // 1                                        
+            } else if (clickedStep < this.range.starts + ((this.range.ends-this.range.starts) / 2)) {                                        
                 this.range.starts = clickedStep;
-            } else if (clickedStep >= this.range.starts + ((this.range.ends-this.range.starts)/2)) { // 2                     
+            } else if (clickedStep >= this.range.starts + ((this.range.ends-this.range.starts) / 2)) {                     
                 this.range.ends = clickedStep;                 
             } else {       
                 console.log('[cr-idle-click]');
@@ -87,7 +84,7 @@ export default {
         },
         setUniqueID() {
             if (!this.range.id) {
-                this.range.id = Math.round(Math.random()*10000); 
+                this.range.id = Math.round(Math.random() * 10000); 
             } 
         }
     },
@@ -100,7 +97,7 @@ export default {
 </script>
 
 <style>
-    .cr {
+    .customRange {
         border-width: 1px;
         border-color: #707070;
         border-style: solid;
